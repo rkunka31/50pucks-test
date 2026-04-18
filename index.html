@@ -170,7 +170,7 @@ body.dark-theme canvas{filter:saturate(.95)}
 // ============================================================
 const SEASONS={
   2025:{id:'20242025',fee:50,sheetUrl:'',mult:{CAR:1.5,COL:1.5,DAL:1.5,EDM:1.5,FLA:1.5,LAK:1.5,NJD:1.5,TBL:1.5,TOR:1.0,WSH:1.0,WPG:1.0,VGK:1.0,MTL:2.0,OTT:2.0,MIN:2.0,STL:2.0,PHI:1.5,BOS:1.5,NYR:1.5,NYI:1.5},alive:['CAR','DAL','EDM','FLA','LAK','PHI','TBL','TOR','WSH','VGK','WPG']},
-  2026:{id:'20252026',fee:50,sheetUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRB40X80kl-o3umS5nTtxa0ln4mYxj8u4PXdXdBTIIQ0fSOL5EtIIMzxZkSp_VDYnADhyIoMPxgaloK/pub?output=csv',mult:{CAR:1.0,BUF:1.0,COL:1.0,VEG:1.0,TBL:1.5,MTL:1.5,PIT:1.5,PHI:1.5,DAL:1.5,MIN:1.5,EDM:1.5,ANA:1.5,BOS:2.0,OTT:2.0,UTA:2.0,LAK:2.0},alive:['CAR','BUF','COL','VEG','TBL','MTL','PIT','PHI','DAL','MIN','EDM','ANA','BOS','OTT','UTA','LAK']},
+  2026:{id:'20252026',fee:50,sheetUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRB40X80kl-o3umS5nTtxa0ln4mYxj8u4PXdXdBTIIQ0fSOL5EtIIMzxZkSp_VDYnADhyIoMPxgaloK/pub?output=csv',configUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRB40X80kl-o3umS5nTtxa0ln4mYxj8u4PXdXdBTIIQ0fSOL5EtIIMzxZkSp_VDYnADhyIoMPxgaloK/pub?output=csv&sheet=Config',mult:{CAR:1.0,BUF:1.0,COL:1.0,VEG:1.0,TBL:1.5,MTL:1.5,PIT:1.5,PHI:1.5,DAL:1.5,MIN:1.5,EDM:1.5,ANA:1.5,BOS:2.0,OTT:2.0,UTA:2.0,LAK:2.0},alive:['CAR','BUF','COL','VEG','TBL','MTL','PIT','PHI','DAL','MIN','EDM','ANA','BOS','OTT','UTA','LAK']},
 };
 const CFG={title:'50 Pucks',pk:50,minPk:1,maxPk:6,fwd:10,def:5,cur:'CAD',pay:[{p:1,l:'1st',r:.6},{p:2,l:'2nd',r:.3},{p:3,l:'3rd',r:.1}]};
 const SHOW_ENTRY_TAB=false; // change to true to show the Enter Team tab
@@ -183,18 +183,24 @@ const ALL_TEAMS=['ANA','BOS','BUF','CGY','CAR','CHI','COL','CBJ','DAL','DET','ED
 function nm(a){if(!a)return'';const u=a.toUpperCase().trim();return AM[u]||u;}
 function sn(){return SEASONS[S.yr]||SEASONS[2025];}
 function mt(t){return sn().mult[nm(t)]??1.0;}
-function al(t){return sn().alive.includes(nm(t));}
+function getAliveTeams(){
+  const cfg=S?.config?.aliveTeams;
+  if(Array.isArray(cfg) && cfg.length) return cfg.map(nm);
+  const season=sn();
+  return Array.isArray(season.alive) && season.alive.length?season.alive.map(nm):ALL_TEAMS;
+}
+function al(t){return getAliveTeams().includes(nm(t));}
+function getRoundDisplay(){
+  const cur=Number(S?.config?.currentRound)||1;
+  const tot=Number(S?.config?.totalRounds)||4;
+  return `${cur} of ${tot}`;
+}
 
 // Build player lists by PPG: top 6 forwards and top 4 defensemen per team
 function buildPlayerListByPPG(stats){
   const byTeam={};for(const p of stats){if(!byTeam[p.team])byTeam[p.team]={F:[],D:[]};if(p.pos==='D')byTeam[p.team].D.push(p);else byTeam[p.team].F.push(p);}
   const result={};for(const team in byTeam){const fwd=byTeam[team].F.sort((a,b)=>(b.gp>0?b.pts/b.gp:0)-(a.gp>0?a.pts/a.gp:0)).slice(0,6);const def=byTeam[team].D.sort((a,b)=>(b.gp>0?b.pts/b.gp:0)-(a.gp>0?a.pts/a.gp:0)).slice(0,4);result[team]=[...fwd,...def];}
   return result;
-}
-// Get teams that are alive (not mathematically eliminated)
-function getAliveTeams(){
-  const season=sn();
-  return season.alive.length>0?season.alive:ALL_TEAMS;
 }
 
 // ============================================================
@@ -901,6 +907,34 @@ function mp(n,lu){if(!n)return null;const c=n.toLowerCase().trim();if(lu.has(c))
 // ============================================================
 async function fetchEntries(){const url=sn().sheetUrl;if(!url)return sample();try{const r=await fetch(url);if(!r.ok)throw 0;const lns=(await r.text()).split('\n').filter(l=>l.trim());if(lns.length<2)return sample();const ent=new Map();for(let i=1;i<lns.length;i++){const c=csvL(lns[i]);if(c.length<6)continue;const[tn,on,pn,pt,pos,pk]=c.map(x=>x.trim());if(!tn||!pn)continue;if(!ent.has(tn))ent.set(tn,{teamName:tn,owner:on||tn,players:[]});ent.get(tn).players.push({name:pn,team:nm(pt),position:['D','DEF','DEFENSE'].includes((pos||'').toUpperCase())?'D':'F',pucks:parseInt(pk)||0});}return[...ent.values()];}catch{return sample();}}
 function csvL(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===','&&!q){r.push(c);c='';}else c+=ch;}r.push(c);return r;}
+async function fetchConfigFromSheet(){
+  const url=sn().configUrl;
+  if(!url)return null;
+  try{
+    const r=await fetch(url);
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const lines=(await r.text()).split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2) return null;
+    const headers=csvL(lines[0]).map(v=>String(v||'').trim().toLowerCase());
+    let row=null;
+    for(let i=1;i<lines.length;i++){
+      const cols=csvL(lines[i]);
+      if(cols.some(v=>String(v||'').trim())){row=cols;break;}
+    }
+    if(!row) return null;
+    const rec=Object.fromEntries(headers.map((h,i)=>[h,String(row[i]||'').trim()]));
+    const aliveTeams=(rec.alive_teams||'').split(',').map(v=>nm(v)).filter(Boolean);
+    return {
+      season:rec.round||'',
+      currentRound:parseInt(rec.current_round||'1',10)||1,
+      totalRounds:parseInt(rec.total_rounds||'4',10)||4,
+      aliveTeams
+    };
+  }catch(err){
+    console.warn('Config sheet fetch error:',err);
+    return null;
+  }
+}
 function sample(){return[
 {teamName:'COWABUNGAR DUDE',owner:'Matt Ungar',players:[{name:'Leon Draisaitl',team:'EDM',position:'F',pucks:6},{name:'Connor McDavid',team:'EDM',position:'F',pucks:6},{name:'Nikita Kucherov',team:'TBL',position:'F',pucks:6},{name:'Brayden Point',team:'TBL',position:'F',pucks:4},{name:'Nathan MacKinnon',team:'COL',position:'F',pucks:4},{name:'Mikko Rantanen',team:'DAL',position:'F',pucks:2},{name:'Wyatt Johnston',team:'DAL',position:'F',pucks:2},{name:'Jack Eichel',team:'VGK',position:'F',pucks:4},{name:'Brandon Hagel',team:'TBL',position:'F',pucks:2},{name:'Seth Jarvis',team:'CAR',position:'F',pucks:2},{name:'Cale Makar',team:'COL',position:'D',pucks:4},{name:'Evan Bouchard',team:'EDM',position:'D',pucks:2},{name:'Victor Hedman',team:'TBL',position:'D',pucks:2},{name:'Thomas Harley',team:'DAL',position:'D',pucks:2},{name:'Shayne Gostisbehere',team:'CAR',position:'D',pucks:2}]},
 {teamName:'WILKES-BARRE ALL STARS',owner:'Shaun Wilkes',players:[{name:'Connor McDavid',team:'EDM',position:'F',pucks:6},{name:'Leon Draisaitl',team:'EDM',position:'F',pucks:6},{name:'Nathan MacKinnon',team:'COL',position:'F',pucks:6},{name:'Sam Bennett',team:'FLA',position:'F',pucks:4},{name:'Brad Marchand',team:'FLA',position:'F',pucks:4},{name:'Mitch Marner',team:'TOR',position:'F',pucks:3},{name:'Auston Matthews',team:'TOR',position:'F',pucks:3},{name:'Matthew Tkachuk',team:'FLA',position:'F',pucks:3},{name:'Aleksander Barkov',team:'FLA',position:'F',pucks:2},{name:'Carter Verhaeghe',team:'FLA',position:'F',pucks:2},{name:'Cale Makar',team:'COL',position:'D',pucks:3},{name:'Devon Toews',team:'COL',position:'D',pucks:2},{name:'Evan Bouchard',team:'EDM',position:'D',pucks:2},{name:'Aaron Ekblad',team:'FLA',position:'D',pucks:2},{name:'Morgan Rielly',team:'TOR',position:'D',pucks:2}]},
@@ -950,7 +984,7 @@ function poi(l){if(l<=0)return 0;const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math
 // STATE
 // ============================================================
 const savedPrefs=(()=>{try{return JSON.parse(localStorage.getItem('50pucks_prefs')||'{}')}catch(e){return {}}})();
-let S={loading:true,entries:[],stats:null,yr:2026,tab:'entry',sel:null,simRes:null,simRun:false,simCfg:{n:1000,v:.5,adv:{1:.6,1.5:.5,2:.35}},showSim:false,pSort:'ownership',pPos:'all',chartView:'score',_chart:null,_charts:[],adminAuth:false,hiddenTabs:new Set(),_nhlStats:null,expandedTeam:null,cmpA:null,cmpB:null,showSettings:false,theme:savedPrefs.theme||'light',tickerOn:savedPrefs.tickerOn!==false,tickerSpeed:savedPrefs.tickerSpeed||'normal'};
+let S={loading:true,entries:[],stats:null,yr:2026,tab:'entry',sel:null,simRes:null,simRun:false,simCfg:{n:1000,v:.5,adv:{1:.6,1.5:.5,2:.35}},showSim:false,pSort:'ownership',pPos:'all',chartView:'score',_chart:null,_charts:[],adminAuth:false,hiddenTabs:new Set(),_nhlStats:null,expandedTeam:null,cmpA:null,cmpB:null,showSettings:false,theme:savedPrefs.theme||'light',tickerOn:savedPrefs.tickerOn!==false,tickerSpeed:savedPrefs.tickerSpeed||'normal',config:null};
 let _src='',_ld=false;
 function set(u){Object.assign(S,u);render();}
 function savePrefs(){try{localStorage.setItem('50pucks_prefs',JSON.stringify({theme:S.theme,tickerOn:S.tickerOn,tickerSpeed:S.tickerSpeed}))}catch(e){}}
@@ -968,6 +1002,7 @@ async function loadData(){if(_ld)return;_ld=true;
   document.getElementById('loader').style.display='flex';document.getElementById('app').style.display='none';
   try{
     const st=await fetchStats(sn().id).catch(()=>[]);
+    S.config=await fetchConfigFromSheet();
     let en=[];
     if(S.yr===2026){
       // For 2026, check if entries already exist (persisted or from Sheet)
@@ -1065,8 +1100,8 @@ function render(){
       </div>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-2 text-right shrink-0 text-[11px] sm:text-[12px]">
-      <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Round</div><div class="font-semibold text-slate-900">2 of 4</div></div>
-      <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Teams Alive</div><div class="font-semibold text-slate-900 num">${sn().alive.length}/${Object.keys(sn().mult).length}</div></div>
+      <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Round</div><div class="font-semibold text-slate-900">${getRoundDisplay()}</div></div>
+      <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Teams Alive</div><div class="font-semibold text-slate-900 num">${getAliveTeams().length}/${Object.keys(sn().mult).length}</div></div>
       <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Entries</div><div class="font-semibold text-slate-900 num">${S.entries.length}</div></div>
       <div><div class="uppercase tracking-[0.2em] text-slate-500 text-[10px] mb-1">Updated</div><div class="font-semibold text-slate-900">APR 17, 2026</div></div>
       <div class="col-span-2 sm:col-span-4 flex justify-end gap-2 mt-1">
@@ -1352,7 +1387,7 @@ function SM(){
 function NF(){
   const pool=S.stats?.pool||0;const pay=CFG.pay.map(p=>({...p,a:Math.round(pool*p.r)}));
   const ms=sn().mult;const tByM={};Object.entries(ms).forEach(([t,m])=>{const k=m+'x';if(!tByM[k])tByM[k]=[];tByM[k].push(t);});
-  const mH=Object.keys(ms).length?['2x','1.5x','1x'].filter(k=>tByM[k]?.length).map(tier=>{const m=parseFloat(tier);const cl=m===2?'#d4a843':m===1?'#94a3b8':'#0f1729';return`<div class="mb-2"><span class="text-xs font-bold" style="color:${cl}">${tier}</span> <span class="text-[10px] text-slate-400">${m===2?'Wild Card':m===1?'Div Winners':'Mid'}</span><div class="flex flex-wrap gap-1 mt-1">${(tByM[tier]||[]).sort().map(t=>`<span class="px-1.5 py-0.5 rounded text-[10px] font-medium ${sn().alive.includes(t)?'bg-slate-100 text-slate-700':'bg-slate-50 text-slate-300 line-through'}">${t}</span>`).join('')}</div></div>`;}).join(''):'';
+  const mH=Object.keys(ms).length?['2x','1.5x','1x'].filter(k=>tByM[k]?.length).map(tier=>{const m=parseFloat(tier);const cl=m===2?'#d4a843':m===1?'#94a3b8':'#0f1729';return`<div class="mb-2"><span class="text-xs font-bold" style="color:${cl}">${tier}</span> <span class="text-[10px] text-slate-400">${m===2?'Wild Card':m===1?'Div Winners':'Mid'}</span><div class="flex flex-wrap gap-1 mt-1">${(tByM[tier]||[]).sort().map(t=>`<span class="px-1.5 py-0.5 rounded text-[10px] font-medium ${al(t)?'bg-slate-100 text-slate-700':'bg-slate-50 text-slate-300 line-through'}">${t}</span>`).join('')}</div></div>`;}).join(''):'';
   const rl=(n,t)=>`<div class="flex gap-2 mb-2"><span class="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0" style="background:#d4a84320;color:#96792f">${n}</span><p class="text-xs text-slate-600">${t}</p></div>`;
   return`<div class="space-y-3">
     <div class="card p-3">${rl(1,`${CFG.fwd}F + ${CFG.def}D, ${CFG.pk} pucks (min ${CFG.minPk}, max ${CFG.maxPk})`)}${rl(2,'WC = 2.0x, middle = 1.5x, div winners = 1.0x')}${rl(3,'<strong>Score = Points × Pucks × Multiplier</strong>')}${rl(4,`$${sn().fee} ${CFG.cur} per entry`)}</div>

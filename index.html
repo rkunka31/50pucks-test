@@ -1,0 +1,1855 @@
+<!DOCTYPE html><html lang="en" data-theme="light" style="--gold: #7aa8ff; --gold-soft: rgb(141, 181, 255); --gold-deep: rgb(73, 100, 153);"><head>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 Pucks — NHL Playoff Pool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+/* =========================================================
+   50 PUCKS — BROADCAST DARK
+   Typography: Fraunces (display), Noto Sans (UI + numbers)
+   Palette: deep ink navy, ice white, warm gold accent
+   ========================================================= */
+:root{
+  --ink-900:#0a0e1a;
+  --ink-850:#0e1423;
+  --ink-800:#131a2d;
+  --ink-700:#1b2441;
+  --ink-600:#2a355a;
+  --line:#242e4d;
+  --line-soft:#1a2238;
+  --fg:#e9edf6;
+  --fg-dim:#a6b0c9;
+  --fg-muted:#6b7592;
+  --fg-faint:#485072;
+  --gold:#d4a843;
+  --gold-soft:#f1c55d;
+  --gold-deep:#8f6f1e;
+  --red:#e4526b;
+  --green:#4fd1a1;
+  --blue:#7aa8ff;
+  --violet:#b58bff;
+  --radius:6px;
+}
+[data-theme="light"]{
+  --ink-900:#f6f5f1;
+  --ink-850:#efeee7;
+  --ink-800:#e7e5da;
+  --ink-700:#d9d6c8;
+  --ink-600:#c8c4b2;
+  --line:#d6d2c2;
+  --line-soft:#e0dcca;
+  --fg:#18171a;
+  --fg-dim:#3d3b3f;
+  --fg-muted:#6b6970;
+  --fg-faint:#989399;
+  --gold:#8f6f1e;
+  --gold-soft:#b38a2d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--ink-900);color:var(--fg);font-family:'Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{min-height:100vh;font-size:14px;line-height:1.45}
+.num,.mono{font-family:'Noto Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}
+.display{font-family:'Fraunces',serif;font-weight:500;letter-spacing:-0.02em}
+::selection{background:var(--gold);color:var(--ink-900)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--ink-600);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--fg-faint)}
+
+/* ---------- SHELL ---------- */
+.shell{max-width:1400px;margin:0 auto;padding:0 28px}
+@media (max-width:700px){.shell{padding:0 16px}}
+
+/* Top masthead */
+.masthead{border-bottom:1px solid var(--line);padding:18px 0 16px;position:relative}
+.masthead::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--gold) 0%,var(--gold) 20%,transparent 20%);}
+.mast-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand-mark{width:44px;height:44px;border-radius:4px;background:var(--gold);color:var(--ink-900);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:800;font-size:22px;letter-spacing:-0.02em;box-shadow:0 0 0 1px rgba(0,0,0,.15) inset}
+.brand-title{font-family:'Fraunces',serif;font-weight:600;font-size:32px;letter-spacing:-0.03em;line-height:1}
+.brand-title em{font-style:italic;font-weight:500;color:var(--gold)}
+.brand-sub{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--fg-muted);margin-top:6px;font-weight:500}
+.mast-meta{display:flex;gap:28px;align-items:flex-end}
+.meta-item{text-align:right}
+.meta-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:3px}
+.meta-value{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;color:var(--fg)}
+.meta-value.live{display:inline-flex;align-items:center;gap:6px}
+.meta-value.live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(228,82,107,.15);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.yr-chip{padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:transparent;color:var(--fg);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:12px;cursor:pointer;letter-spacing:0.05em}
+.yr-chip:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Ticker */
+.ticker{border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;background:var(--ink-850)}
+.ticker-inner{display:inline-flex;gap:48px;padding:10px 0;animation:tick var(--tick-dur,120s) linear infinite}
+.ticker-inner.paused{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:inline-flex;gap:10px;align-items:center;font-size:12px;color:var(--fg-dim)}
+.tk b{color:var(--fg);font-weight:600}
+.tk .t{padding:1px 6px;border-radius:2px;background:var(--ink-700);color:var(--gold-soft);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;letter-spacing:0.08em}
+.tk .delta{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:11px}
+.tk .up{color:var(--green)}
+.tk .dn{color:var(--red)}
+
+/* Nav */
+.nav{border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink-900);z-index:50}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-btn{padding:14px 18px 12px;background:none;border:0;border-bottom:2px solid transparent;color:var(--fg-muted);font-family:'Noto Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.nav-btn:hover{color:var(--fg-dim)}
+.nav-btn.on{color:var(--fg);border-bottom-color:var(--gold);font-weight:600}
+.nav-btn .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);display:inline-block;margin-left:6px;vertical-align:middle}
+
+/* ---------- HERO STATS STRIP ---------- */
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--line);margin:0 -28px}
+@media (max-width:900px){.strip{grid-template-columns:repeat(2,1fr)} .strip>div:nth-child(5){grid-column:span 2}}
+.strip>div{padding:18px 28px;border-left:1px solid var(--line-soft);min-height:92px;display:flex;flex-direction:column;justify-content:center}
+.strip>div:first-child{border-left:0}
+.strip-label{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.strip-label .pip{width:6px;height:6px;border-radius:50%}
+.strip-val{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:26px;font-weight:500;color:var(--fg);letter-spacing:-0.01em;line-height:1.1}
+.strip-val.gold{color:var(--gold)}
+.strip-sub{font-size:11px;color:var(--fg-muted);margin-top:4px;line-height:1.3}
+.strip-sub b{color:var(--fg-dim);font-weight:500}
+
+/* ---------- SECTION HEADERS ---------- */
+main{padding:28px 0 60px}
+.sect{margin-bottom:36px}
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;gap:20px;flex-wrap:wrap}
+.sect-t{font-family:'Fraunces',serif;font-weight:600;font-size:24px;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:12px}
+.sect-t .ix{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;color:var(--gold);font-weight:500;letter-spacing:0.12em}
+.sect-hint{font-size:12px;color:var(--fg-muted);max-width:420px}
+
+/* ---------- LEADERBOARD ---------- */
+.lb{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-850)}
+.lb-head{display:grid;grid-template-columns:44px minmax(180px,2.2fr) 90px 130px 90px 90px 1.3fr 28px;padding:10px 16px;background:var(--ink-800);border-bottom:1px solid var(--line);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;gap:12px}
+.lb-head .sortable{cursor:pointer;user-select:none}
+.lb-head .sortable:hover{color:var(--fg-dim)}
+.lb-head .sortable.active{color:var(--gold)}
+.lb-row{display:grid;grid-template-columns:44px minmax(180px,2.2fr) 90px 130px 90px 90px 1.3fr 28px;padding:14px 16px;border-bottom:1px solid var(--line-soft);gap:12px;align-items:center;cursor:pointer;transition:background .12s;position:relative}
+.lb-row:last-child{border-bottom:0}
+.lb-row:hover{background:rgba(212,168,67,.04)}
+.lb-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:transparent;transition:background .15s}
+.lb-row:hover::before{background:var(--gold)}
+.lb-row.expanded{background:rgba(212,168,67,.06)}
+.lb-row.expanded::before{background:var(--gold)}
+
+.rank-box{display:flex;align-items:center;gap:4px}
+.rank-n{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:18px;font-weight:500;color:var(--fg);width:28px;text-align:right}
+.rank-n.r1{color:var(--gold);font-weight:700}
+.rank-n.r2{color:var(--fg-dim)}
+.rank-n.r3{color:#c98a5e}
+.rank-mv{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;width:18px;text-align:center}
+.rank-mv.up{color:var(--green)}
+.rank-mv.dn{color:var(--red)}
+.rank-mv.same{color:var(--fg-faint)}
+
+.team-cell{min-width:0}
+.team-name{font-weight:600;font-size:14px;color:var(--fg);letter-spacing:-0.01em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-owner{font-size:11px;color:var(--fg-muted);margin-top:2px}
+
+.score-cell{text-align:right;font-family:"Noto Sans",sans-serif;font-size:20px;font-weight:500;color:var(--fg)}
+.score-cell .decimals{color:var(--fg-muted);font-size:14px}
+
+.alive-cell{text-align:center;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--fg-dim)}
+.alive-cell .num{color:var(--fg)}
+.alive-cell .div{color:var(--fg-faint)}
+.alive-cell.crit{color:var(--red)}
+.alive-cell.crit .num{color:var(--red)}
+
+.pucks-cell{text-align:right;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:13px;color:var(--fg-dim)}
+.pucks-cell .num{color:var(--fg);font-size:14px;font-weight:500}
+
+.spark-cell{display:flex;align-items:center;gap:8px}
+.spark{flex:1;height:22px}
+.spark-delta{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;padding:2px 5px;border-radius:2px;font-weight:500}
+.spark-delta.up{background:rgba(79,209,161,.12);color:var(--green)}
+.spark-delta.dn{background:rgba(228,82,107,.12);color:var(--red)}
+.spark-delta.same{background:var(--ink-700);color:var(--fg-faint)}
+
+.chev{color:var(--fg-faint);font-size:16px;transition:transform .2s,color .2s;text-align:right}
+.lb-row:hover .chev{color:var(--gold)}
+.lb-row.expanded .chev{transform:rotate(90deg);color:var(--gold)}
+
+/* expanded drawer */
+.drawer{grid-column:1/-1;padding:20px 16px 20px 46px;border-top:1px dashed var(--line);background:var(--ink-900);display:grid;grid-template-columns:1.1fr 1.1fr 1fr;gap:24px}
+@media (max-width:900px){.drawer{grid-template-columns:1fr 1fr}.drawer-side{grid-column:1/-1}}
+@media (max-width:600px){.drawer{grid-template-columns:1fr}.drawer-side{grid-column:auto}}
+.drawer-title{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:10px}
+.puck-bar{display:flex;gap:2px;height:26px;border-radius:3px;overflow:hidden;margin-bottom:8px}
+.puck-bar-seg{flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:9px;color:rgba(255,255,255,.8);font-weight:600;transition:opacity .15s}
+.puck-bar-seg:hover{opacity:.85}
+.puck-bar-seg.dead{opacity:.3}
+.puck-legend{font-size:10px;color:var(--fg-muted);display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.puck-legend .k{display:inline-flex;align-items:center;gap:4px}
+.puck-legend .k .sw{width:8px;height:8px;border-radius:1px;display:inline-block}
+
+.mini-roster{font-size:11px}
+.mini-roster .group{margin-bottom:10px}
+.mini-roster .g-h{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between}
+.mini-roster .g-h .pts{color:var(--gold)}
+.mini-roster .p{display:grid;grid-template-columns:1fr 28px 32px 36px 46px;gap:8px;padding:3px 0;border-bottom:1px dotted var(--line-soft);font-size:11px}
+.mini-roster .p .n{color:var(--fg);font-weight:500;display:flex;align-items:center;gap:6px}
+.mini-roster .p .dot{width:6px;height:6px;border-radius:50%}
+.mini-roster .p .t{color:var(--fg-muted);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px}
+.mini-roster .p .pk{color:var(--fg-dim);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;text-align:right}
+.mini-roster .p .mx{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px;text-align:center}
+.mini-roster .p .sc{color:var(--fg);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:12px;font-weight:500;text-align:right}
+.mx.m1{color:var(--fg-faint)}.mx.m15{color:var(--blue)}.mx.m2{color:var(--gold)}
+.open-full{display:inline-block;margin-top:12px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-deep);padding-bottom:2px}
+.open-full:hover{color:var(--gold-soft)}
+
+/* Drawer side panel */
+.drawer-side{padding:0 0 0 16px;border-left:1px solid var(--line-soft)}
+@media (max-width:900px){.drawer-side{padding:12px 0 0;border-left:0;border-top:1px solid var(--line-soft)}}
+.contrib-list{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.cr{display:grid;grid-template-columns:1fr auto auto;gap:8px;font-size:11px;padding:3px 0;align-items:center}
+.cr-n{color:var(--fg);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-t{font-size:10px;font-weight:600;letter-spacing:0.05em}
+.cr-s{font-variant-numeric:tabular-nums;color:var(--gold);font-weight:500;font-size:12px}
+.cr.dead .cr-n{color:var(--fg-faint);text-decoration:line-through}
+.cr.dead .cr-s{color:var(--red)}
+.cr.dead .cr-t{color:var(--fg-muted)}
+.tm-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.tm-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 7px;border-radius:2px;background:var(--ink-800);border-left:2px solid var(--tc);font-size:10px;color:var(--fg-dim)}
+.tm-chip b{color:var(--fg);font-weight:600;letter-spacing:0.04em}
+.tm-chip span{font-variant-numeric:tabular-nums;color:var(--fg-muted)}
+.tm-chip.out{opacity:.45}
+.tm-chip.out b{text-decoration:line-through}
+
+/* Mobile lb: collapse columns */
+@media (max-width:720px){
+  .lb-head{display:none}
+  .lb-row{grid-template-columns:36px 1fr auto 24px;padding:12px}
+  .lb-row .alive-cell,.lb-row .pucks-cell,.lb-row .spark-cell{display:none}
+  .score-cell{font-size:17px}
+  .drawer{padding:16px 12px;grid-template-columns:1fr}
+}
+
+/* ---------- ANALYTICS DASHBOARD ---------- */
+.grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+
+/* KPI strip */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-850);margin-bottom:16px;overflow:hidden}
+@media (max-width:900px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+.kpi{padding:16px 18px;border-right:1px solid var(--line);position:relative;min-width:0}
+.kpi:last-child{border-right:0}
+@media (max-width:900px){.kpi{border-right:0;border-bottom:1px solid var(--line)}.kpi:nth-child(2n){border-right:0}}
+.kpi .k-l{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.kpi .k-v{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:28px;font-weight:500;color:var(--fg);line-height:1;letter-spacing:-0.01em}
+.kpi .k-v .u{font-size:13px;color:var(--fg-muted);margin-left:4px;font-weight:400}
+.kpi .k-s{font-size:11px;color:var(--fg-faint);margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .k-s.up{color:var(--green)}
+.kpi .k-s.dn{color:var(--red)}
+.kpi-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block}
+.card{background:var(--ink-850);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+.card-t{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600}
+.card-sub{font-size:11px;color:var(--fg-faint);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums}
+
+.col-4{grid-column:span 4}
+.col-5{grid-column:span 5}
+.col-6{grid-column:span 6}
+.col-7{grid-column:span 7}
+.col-8{grid-column:span 8}
+.col-12{grid-column:span 12}
+@media (max-width:900px){
+  .col-4,.col-5,.col-6,.col-7,.col-8{grid-column:span 12}
+}
+
+.chart-box{height:260px;position:relative}
+.chart-lg{height:320px;position:relative}
+
+/* horiz bar list */
+.hbar{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12px}
+.hbar .lbl{width:38%;color:var(--fg-dim);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar .track{flex:1;height:8px;background:var(--ink-700);border-radius:1px;overflow:hidden;position:relative}
+.hbar .fill{height:100%;background:var(--gold);border-radius:1px}
+.hbar .fill.alt{background:var(--blue)}
+.hbar .v{width:44px;text-align:right;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;color:var(--fg);font-size:11px}
+
+/* team exposure heatmap */
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:4px}
+.heat-cell{padding:8px 10px;border-radius:3px;display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden;min-height:56px}
+.heat-cell .hc-t{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;font-weight:600;letter-spacing:0.05em;color:rgba(255,255,255,.95)}
+.heat-cell .hc-v{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;color:var(--fg);z-index:1}
+.heat-cell .hc-x{font-size:9px;color:var(--fg-muted);z-index:1}
+.heat-cell::before{content:'';position:absolute;inset:0;background:var(--bg);opacity:var(--op,.25)}
+.heat-cell.dead::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(0,0,0,.15) 6px 12px)}
+.heat-cell.dead .hc-v{color:var(--fg-faint);text-decoration:line-through}
+
+/* multipliers legend */
+.mult-row{display:flex;gap:14px;font-size:11px;color:var(--fg-muted);margin-top:8px;flex-wrap:wrap}
+.mult-row .k{display:inline-flex;align-items:center;gap:5px}
+.mult-row .k .sw{display:inline-block;width:10px;height:10px;border-radius:2px}
+
+/* ---------- TEAM DETAIL ---------- */
+.td-h{display:grid;grid-template-columns:1fr auto;gap:24px;padding:24px;background:linear-gradient(180deg,var(--ink-800),var(--ink-850));border:1px solid var(--line);border-radius:var(--radius);margin-bottom:20px}
+.td-title{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.td-title .rnk{font-family:'Fraunces',serif;font-weight:700;font-size:56px;letter-spacing:-0.04em;color:var(--gold);line-height:1}
+.td-title .nm{font-family:'Fraunces',serif;font-weight:600;font-size:28px;letter-spacing:-0.02em;line-height:1.1}
+.td-title .own{font-size:12px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.1em}
+.td-stats{display:flex;gap:28px}
+.td-stat{text-align:right}
+.td-stat .l{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:4px}
+.td-stat .v{font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:22px;color:var(--fg);font-weight:500}
+.td-stat .v.gold{color:var(--gold)}
+.td-stat .v.red{color:var(--red)}
+.td-stat .v.green{color:var(--green)}
+
+.td-selector{display:flex;gap:8px;align-items:center;margin-bottom:16px;font-size:12px;color:var(--fg-muted)}
+select.slim{background:var(--ink-800);border:1px solid var(--line);color:var(--fg);padding:6px 28px 6px 10px;border-radius:3px;font-size:12px;font-family:'Noto Sans',sans-serif;appearance:none;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a6b0c9'%3e%3cpath d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 8px center;background-size:14px;cursor:pointer}
+select.slim:hover{border-color:var(--gold)}
+select.slim:focus{outline:0;border-color:var(--gold)}
+
+.roster-tbl{width:100%;border-collapse:collapse;background:var(--ink-850);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.roster-tbl th{background:var(--ink-800);padding:10px 12px;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;text-align:right;border-bottom:1px solid var(--line)}
+.roster-tbl th:first-child,.roster-tbl th:nth-child(2){text-align:left}
+.roster-tbl td{padding:10px 12px;border-bottom:1px solid var(--line-soft);font-size:12px;text-align:right;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;color:var(--fg-dim)}
+.roster-tbl td:first-child,.roster-tbl td:nth-child(2){text-align:left;font-family:'Noto Sans',sans-serif}
+.roster-tbl td.nm{color:var(--fg);font-weight:500}
+.roster-tbl tr.dead td.nm{color:var(--fg-faint);text-decoration:line-through}
+.roster-tbl .sec-hd td{background:var(--ink-800);color:var(--gold);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;font-weight:600;padding:8px 12px;text-align:left}
+.roster-tbl .sec-hd td.r{text-align:right;color:var(--fg-muted);font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-weight:500}
+.roster-tbl .m{text-align:center}
+.roster-tbl .sc{color:var(--fg);font-weight:500;font-size:13px}
+.roster-tbl .alive-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle}
+.roster-tbl .alive-dot.a{background:var(--green)}
+.roster-tbl .alive-dot.d{background:var(--fg-faint)}
+
+/* ---------- PLAYERS TABLE ---------- */
+.filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.pill{padding:5px 12px;border:1px solid var(--line);border-radius:20px;background:transparent;color:var(--fg-muted);font-size:11px;font-weight:500;cursor:pointer;letter-spacing:0.04em;transition:all .15s}
+.pill:hover{color:var(--fg-dim);border-color:var(--fg-faint)}
+.pill.on{background:var(--gold);border-color:var(--gold);color:var(--ink-900);font-weight:600}
+
+/* ---------- INFO ---------- */
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:700px){.tier-grid{grid-template-columns:1fr}}
+.tier{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--ink-850)}
+.tier .t-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.tier .t-x{font-family:'Fraunces',serif;font-size:28px;font-weight:600;letter-spacing:-0.02em}
+.tier .t-l{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600}
+.tier .t-teams{display:flex;flex-wrap:wrap;gap:4px}
+.tier .t-teams span{padding:3px 7px;border-radius:2px;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:11px;background:var(--ink-700);color:var(--fg-dim)}
+.tier .t-teams span.dead{background:transparent;color:var(--fg-faint);text-decoration:line-through}
+.tier.fav .t-x{color:var(--fg-dim)}
+.tier.mid .t-x{color:var(--blue)}
+.tier.wc .t-x{color:var(--gold)}
+
+.rules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+@media (max-width:700px){.rules-grid{grid-template-columns:1fr}}
+.rule{padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-850)}
+.rule .num-big{font-family:'Fraunces',serif;font-size:28px;color:var(--gold);font-weight:600;line-height:1;margin-bottom:6px}
+.rule .t{font-size:14px;color:var(--fg);font-weight:500;margin-bottom:4px}
+.rule .d{font-size:12px;color:var(--fg-muted);line-height:1.5}
+
+.formula{padding:18px 20px;border:1px dashed var(--line);border-radius:var(--radius);background:rgba(212,168,67,.04);margin-top:16px;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:13px;color:var(--fg-dim);text-align:center;line-height:1.6}
+.formula b{color:var(--gold);font-weight:500}
+.formula .example{font-size:11px;color:var(--fg-muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+
+/* ---------- PROJECTIONS ---------- */
+.proj-bar{display:grid;grid-template-columns:180px 1fr 60px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px dotted var(--line-soft);font-size:12px}
+.proj-bar:last-child{border-bottom:0}
+.proj-bar .l{color:var(--fg-dim);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-bar .t{height:16px;background:var(--ink-700);border-radius:2px;position:relative;overflow:hidden}
+.proj-bar .f{height:100%;background:var(--gold);display:flex;align-items:center;padding:0 6px;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:9px;color:var(--ink-900);font-weight:700}
+.proj-bar .f.sub{background:var(--ink-600);color:var(--fg-dim);font-weight:500}
+.proj-bar .v{text-align:right;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;color:var(--fg)}
+
+.btn{padding:8px 14px;background:var(--gold);color:var(--ink-900);border:0;border-radius:3px;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:'Noto Sans',sans-serif}
+.btn:hover{background:var(--gold-soft)}
+.btn.ghost{background:transparent;color:var(--fg-dim);border:1px solid var(--line)}
+.btn.ghost:hover{color:var(--gold);border-color:var(--gold)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ---------- ENTRY FORM (placeholder note) ---------- */
+.placeholder-note{padding:40px;text-align:center;background:var(--ink-850);border:1px dashed var(--line);border-radius:var(--radius)}
+.placeholder-note h3{font-family:'Fraunces',serif;font-size:20px;margin-bottom:8px;color:var(--fg)}
+.placeholder-note p{font-size:13px;color:var(--fg-muted);max-width:440px;margin:0 auto;line-height:1.6}
+
+/* ---------- TWEAKS PANEL ---------- */
+.tweaks{position:fixed;right:20px;bottom:20px;width:300px;background:var(--ink-800);border:1px solid var(--line);border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.4);z-index:100;display:none;overflow:hidden}
+.tweaks.on{display:block}
+.tweaks .th{padding:12px 16px;background:var(--ink-700);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.tweaks .th h4{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--fg)}
+.tweaks .th button{background:none;border:0;color:var(--fg-muted);font-size:18px;cursor:pointer;padding:0 4px}
+.tweaks .tb{padding:14px 16px}
+.tweaks .tk-row{margin-bottom:14px}
+.tweaks .tk-row:last-child{margin-bottom:0}
+.tweaks .tk-lbl{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
+.tweaks .tk-lbl span.val{color:var(--fg);font-variant-numeric:tabular-nums;letter-spacing:0}
+.tweaks input[type=range]{width:100%;accent-color:var(--gold);background:transparent}
+.swatches{display:flex;gap:6px}
+.sw-btn{width:28px;height:28px;border-radius:3px;border:2px solid transparent;cursor:pointer;position:relative;padding:0}
+.sw-btn.on{border-color:var(--fg)}
+.sw-btn:hover{transform:scale(1.05)}
+.seg{display:flex;gap:2px;background:var(--ink-900);border-radius:3px;padding:2px}
+.seg button{flex:1;padding:6px 8px;background:transparent;border:0;color:var(--fg-muted);font-size:11px;font-weight:500;cursor:pointer;border-radius:2px;font-family:'Noto Sans',sans-serif;text-transform:uppercase;letter-spacing:0.06em}
+.seg button.on{background:var(--gold);color:var(--ink-900);font-weight:600}
+
+.toggle{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--fg-dim);cursor:pointer}
+.toggle input{appearance:none;width:32px;height:18px;background:var(--ink-700);border-radius:10px;position:relative;cursor:pointer;transition:background .15s}
+.toggle input:checked{background:var(--gold)}
+.toggle input::before{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--fg);transition:left .15s}
+.toggle input:checked::before{left:16px;background:var(--ink-900)}
+
+/* Leaderboard extras */
+.owner-tag{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#fff;font-size:9px;font-weight:700;letter-spacing:0.02em;margin-right:8px;vertical-align:middle;flex-shrink:0}
+.team-name{display:flex;align-items:center}
+.live-tonight{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:2px;background:rgba(228,82,107,.14);color:var(--red);font-size:9px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.daily-delta{font-size:10px;font-weight:500;margin-top:2px;font-variant-numeric:tabular-nums;letter-spacing:0.02em}
+.daily-delta.up{color:var(--green)}
+.daily-delta.dn{color:var(--red)}
+.daily-delta.flat{color:var(--fg-faint)}
+
+/* Tonight banner */
+.tonight-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(90deg, rgba(228,82,107,.05), transparent 60%);margin-bottom:20px}
+.tb-ic{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(228,82,107,.12);animation:pulse 1.8s infinite;flex-shrink:0}
+.tb-body{font-size:12px;color:var(--fg-dim);flex:1}
+.tb-body b{color:var(--fg)}
+.tb-games{display:flex;gap:8px;flex-wrap:wrap}
+.tb-game{font-size:11px;padding:3px 8px;border:1px solid var(--line);border-radius:2px;color:var(--fg-dim);font-weight:600;letter-spacing:0.05em}
+
+/* Efficiency callout */
+.eff-banner{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;padding:14px 18px;border:1px solid var(--gold-deep);border-radius:var(--radius);background:rgba(212,168,67,.06);margin-bottom:20px}
+.eff-pill{padding:4px 10px;border-radius:2px;background:var(--gold);color:var(--ink-900);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
+.eff-txt{font-size:13px;color:var(--fg-dim)}
+.eff-txt b{color:var(--fg);font-weight:600}
+.eff-val{font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--gold);letter-spacing:-0.02em}
+
+/* Compare view */
+.cmp-head{display:grid;grid-template-columns:1fr 60px 1fr;gap:16px;margin-bottom:20px;align-items:end}
+.cmp-vs{text-align:center;font-family:'Fraunces',serif;font-size:22px;font-style:italic;color:var(--fg-faint);padding-bottom:8px}
+.cmp-side{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-850);padding:16px}
+.cmp-side .nm{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-bottom:3px}
+.cmp-side .ow{font-size:11px;color:var(--fg-muted);margin-bottom:10px}
+.cmp-side .sc{font-variant-numeric:tabular-nums;font-size:34px;font-weight:500;color:var(--fg);line-height:1}
+.cmp-side .rk{font-size:11px;color:var(--fg-muted);letter-spacing:0.06em;text-transform:uppercase;margin-top:4px}
+.cmp-row{display:grid;grid-template-columns:1fr 90px 90px 90px 1fr;gap:14px;align-items:center;padding:12px 0;border-bottom:1px dotted var(--line-soft);font-size:12px}
+.cmp-row .l,.cmp-row .r{font-variant-numeric:tabular-nums;font-size:13px;color:var(--fg)}
+.cmp-row .l{text-align:right}
+.cmp-row .r{text-align:left}
+.cmp-row .lbl{text-align:center;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-muted);font-weight:600}
+.cmp-row .w{color:var(--gold);font-weight:600}
+.cmp-row .bar-l,.cmp-row .bar-r{height:6px;background:var(--ink-700);border-radius:1px;overflow:hidden;position:relative}
+.cmp-row .bar-l{display:flex;justify-content:flex-end}
+.cmp-row .bar-l .fill,.cmp-row .bar-r .fill{height:100%;background:var(--fg-faint);transition:width .3s}
+.cmp-row .bar-l .fill.w,.cmp-row .bar-r .fill.w{background:var(--gold)}
+@media (max-width:800px){.cmp-row{grid-template-columns:1fr auto 1fr;gap:8px}.cmp-row .bar-l,.cmp-row .bar-r{display:none}}
+.cmp-venn{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:20px}
+@media (max-width:800px){.cmp-venn{grid-template-columns:1fr}.cmp-head{grid-template-columns:1fr}.cmp-vs{display:none}}
+.cmp-col{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-850)}
+.cmp-col h5{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:10px;font-weight:600}
+.cmp-col.shared h5{color:var(--gold)}
+.cmp-p{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:11px;padding:3px 0;border-bottom:1px dotted var(--line-soft)}
+.cmp-p:last-child{border-bottom:0}
+.cmp-p .nm{color:var(--fg);font-weight:500}
+.cmp-p.dead .nm{color:var(--fg-faint);text-decoration:line-through}
+.cmp-p .pk{color:var(--fg-muted);font-variant-numeric:tabular-nums}
+
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.toolbar .spacer{flex:1}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11px}
+  .nav,.ticker,.tweaks,.chev,.tonight-banner,footer,.toolbar,.sect-hint{display:none !important}
+  .masthead{border-bottom:2px solid #000}
+  .lb-row{page-break-inside:avoid}
+  .drawer{display:none}
+  @page{margin:0.4in; size:landscape}
+}
+
+/* Footer */
+footer{border-top:1px solid var(--line);padding:20px 0;margin-top:40px;font-size:11px;color:var(--fg-muted);text-align:center;letter-spacing:0.1em;text-transform:uppercase}
+footer b{color:var(--gold)}
+
+/* Tab transitions */
+.view{animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Utility */
+.hide{display:none}
+</style>
+</head>
+<body data-cc-id="cc-1" style="font-size: 14px; cursor: crosshair; font-family: sans-serif;">
+
+<div id="app">
+  <header class="masthead">
+    <div class="shell">
+      <div class="mast-row">
+        <div class="brand">
+          <div class="brand-mark">50</div>
+          <div>
+            <div class="brand-title">Fifty <em>Pucks</em></div>
+            <div class="brand-sub">NHL Playoff Pool · Season 2025–26</div>
+          </div>
+        </div>
+        <div class="mast-meta">
+          <div class="meta-item">
+            <div class="meta-label">Round</div>
+            <div class="meta-value">2 of 4</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Teams Alive</div>
+            <div class="meta-value">16<span style="color:var(--fg-faint)">/16</span></div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Entries</div>
+            <div class="meta-value">12</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Updated</div>
+            <div class="meta-value live">APR 17, 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header><div class="ticker"><div class="ticker-inner"><span class="tk"><span class="t">POOL</span> <b>DON'T STOP WIELIEVIN'</b> <span class="delta up">▲2</span> <span style="color:var(--fg-muted)">now #7 · 739.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>COWABUNGAR DUDE</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #2 · 947.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>WILKES-BARRE ALL STARS</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #3 · 944 pts</span></span><span class="tk"><span class="t">POOL</span> <b>IT'S THE CUP</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #5 · 853 pts</span></span><span class="tk"><span class="t">POOL</span> <b>POKÉ-CHECK</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #6 · 852.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>THE ROBFATHER</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #9 · 630.5 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Cale Makar</b> <span style="color:var(--fg-muted)">100% owned · avg 56.3 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Nathan MacKinnon</b> <span style="color:var(--fg-muted)">75% owned · avg 73.7 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Connor McDavid</b> <span style="color:var(--fg-muted)">67% owned · avg 160.9 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Evan Bouchard</b> <span style="color:var(--fg-muted)">58% owned · avg 84 pts</span></span><span class="tk"><span class="t">POT</span> <b>$600</b> <span style="color:var(--fg-muted)">· $360 / $180 / $60</span></span><span class="tk"><span class="t">DEAD</span> <b>8%</b> <span style="color:var(--fg-muted)">of pucks on eliminated skaters</span></span><span class="tk"><span class="t">POOL</span> <b>DON'T STOP WIELIEVIN'</b> <span class="delta up">▲2</span> <span style="color:var(--fg-muted)">now #7 · 739.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>COWABUNGAR DUDE</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #2 · 947.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>WILKES-BARRE ALL STARS</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #3 · 944 pts</span></span><span class="tk"><span class="t">POOL</span> <b>IT'S THE CUP</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #5 · 853 pts</span></span><span class="tk"><span class="t">POOL</span> <b>POKÉ-CHECK</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #6 · 852.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>THE ROBFATHER</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #9 · 630.5 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Cale Makar</b> <span style="color:var(--fg-muted)">100% owned · avg 56.3 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Nathan MacKinnon</b> <span style="color:var(--fg-muted)">75% owned · avg 73.7 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Connor McDavid</b> <span style="color:var(--fg-muted)">67% owned · avg 160.9 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Evan Bouchard</b> <span style="color:var(--fg-muted)">58% owned · avg 84 pts</span></span><span class="tk"><span class="t">POT</span> <b>$600</b> <span style="color:var(--fg-muted)">· $360 / $180 / $60</span></span><span class="tk"><span class="t">DEAD</span> <b>8%</b> <span style="color:var(--fg-muted)">of pucks on eliminated skaters</span></span></div></div><nav class="nav"><div class="shell"><div class="nav-inner">
+    <button class="nav-btn on" onclick="setTab('standings')">Standings<span class="dot"></span></button><button class="nav-btn " onclick="setTab('analytics')">Analytics</button><button class="nav-btn " onclick="setTab('team')">Team Detail</button><button class="nav-btn " onclick="setTab('players')">Players</button><button class="nav-btn " onclick="setTab('nhl')">NHL Stats</button><button class="nav-btn " onclick="setTab('projections')">Projections</button><button class="nav-btn " onclick="setTab('info')">Rules</button><button class="nav-btn " onclick="setTab('entry')">Enter Team</button>
+  </div></div></nav><main><div class="shell view">
+  <div class="strip">
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--gold)"></span>Prize Pool</div>
+      <div class="strip-val gold">$600</div>
+      <div class="strip-sub"><b>$360</b> · <b>$180</b> · <b>$60</b></div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--green)"></span>Leader</div>
+      <div class="strip-val">1,002</div>
+      <div class="strip-sub">BOUCHARD FRIES · <b>+54.5</b> lead</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--blue)"></span>Best Pick</div>
+      <div class="strip-val">198</div>
+      <div class="strip-sub"><b>Connor McDavid</b> · BOUCHARD FRIES</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--violet)"></span>Pool Concentration</div>
+      <div class="strip-val">29<span style="color:var(--fg-muted);font-size:18px">%</span></div>
+      <div class="strip-sub">Top 5 most-owned hold this share</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--red)"></span>Dead Puck Rate</div>
+      <div class="strip-val">8<span style="color:var(--fg-muted);font-size:18px">%</span></div>
+      <div class="strip-sub"><b>50</b> of <b>598</b> pucks eliminated</div>
+    </div>
+  </div>
+  <section class="sect" style="margin-top:28px">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§01</span> Leaderboard</h2>
+      <div class="sect-hint">Click any entry to reveal their roster breakdown. Sparkline shows rank movement over the last 10 days.</div>
+    </div>
+    <div class="lb">
+      <div class="lb-head">
+        <div>Rank</div>
+        <div>Team / Owner</div>
+        <div style="text-align:right">Score</div>
+        <div style="text-align:center">Alive / Total</div>
+        <div style="text-align:right">Pucks Left</div>
+        <div style="text-align:right">Best Pick</div>
+        <div>Rank Trajectory</div>
+        <div></div>
+      </div>
+      <div class="lb-row " onclick="toggleRow('BOUCHARD FRIES')">
+    <div class="rank-box">
+      <div class="rank-n r1">1</div>
+      <div class="rank-mv same">—</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">BOUCHARD FRIES</div>
+      <div class="team-owner">Jenny Park</div>
+    </div>
+    <div class="score-cell">1,002<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">14</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">48</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">198</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,22.0 11.1,22.0 22.2,22.0 33.3,0.0 44.4,0.0 55.6,0.0 66.7,0.0 77.8,0.0 88.9,0.0 100.0,0.0"></polyline></svg><span class="spark-delta same">—</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('COWABUNGAR DUDE')">
+    <div class="rank-box">
+      <div class="rank-n r2">2</div>
+      <div class="rank-mv dn">▼1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">COWABUNGAR DUDE</div>
+      <div class="team-owner">Matt Ungar</div>
+    </div>
+    <div class="score-cell">947<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">14</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">46</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">198</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,22.0 11.1,22.0 22.2,11.0 33.3,22.0 44.4,11.0 55.6,22.0 66.7,22.0 77.8,11.0 88.9,0.0 100.0,11.0"></polyline></svg><span class="spark-delta dn">▼1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('WILKES-BARRE ALL STARS')">
+    <div class="rank-box">
+      <div class="rank-n r3">3</div>
+      <div class="rank-mv dn">▼1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">WILKES-BARRE ALL STARS</div>
+      <div class="team-owner">Shaun Wilkes</div>
+    </div>
+    <div class="score-cell">944<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">13</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">45</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">198</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,0.0 11.1,0.0 22.2,11.0 33.3,22.0 44.4,22.0 55.6,11.0 66.7,22.0 77.8,11.0 88.9,11.0 100.0,22.0"></polyline></svg><span class="spark-delta dn">▼1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('SHOTS FIRED')">
+    <div class="rank-box">
+      <div class="rank-n ">4</div>
+      <div class="rank-mv same">—</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">SHOTS FIRED</div>
+      <div class="team-owner">Brian Kim</div>
+    </div>
+    <div class="score-cell">889<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">15</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">50</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">165</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,11.0 11.1,0.0 22.2,0.0 33.3,0.0 44.4,11.0 55.6,22.0 66.7,11.0 77.8,11.0 88.9,22.0 100.0,22.0"></polyline></svg><span class="spark-delta same">—</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('IT'S THE CUP')">
+    <div class="rank-box">
+      <div class="rank-n ">5</div>
+      <div class="rank-mv up">▲1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">IT'S THE CUP</div>
+      <div class="team-owner">Adamo Quarin</div>
+    </div>
+    <div class="score-cell">853<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">15</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">48</span><span style="color:var(--fg-faint)"> / 48</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">165</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,0.0 11.1,7.3 22.2,7.3 33.3,7.3 44.4,14.7 55.6,14.7 66.7,14.7 77.8,22.0 88.9,14.7 100.0,7.3"></polyline></svg><span class="spark-delta up">▲1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('POKÉ-CHECK')">
+    <div class="rank-box">
+      <div class="rank-n ">6</div>
+      <div class="rank-mv up">▲1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">POKÉ-CHECK</div>
+      <div class="team-owner">Sandeep Rao</div>
+    </div>
+    <div class="score-cell">852<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">15</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">50</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">165</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--fg-faint)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,11.0 11.1,11.0 22.2,11.0 33.3,0.0 44.4,0.0 55.6,0.0 66.7,11.0 77.8,11.0 88.9,22.0 100.0,11.0"></polyline></svg><span class="spark-delta up">▲1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('DON'T STOP WIELIEVIN'')">
+    <div class="rank-box">
+      <div class="rank-n ">7</div>
+      <div class="rank-mv up">▲2</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">DON'T STOP WIELIEVIN'</div>
+      <div class="team-owner">Mariusz Wielocha</div>
+    </div>
+    <div class="score-cell">739<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">12</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">40</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">99</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Connor McDavid</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,11.0 11.1,11.0 22.2,22.0 33.3,22.0 44.4,22.0 55.6,11.0 66.7,11.0 77.8,11.0 88.9,22.0 100.0,0.0"></polyline></svg><span class="spark-delta up">▲2</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('CELLY SZN')">
+    <div class="rank-box">
+      <div class="rank-n ">8</div>
+      <div class="rank-mv same">—</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">CELLY SZN</div>
+      <div class="team-owner">Dan Forsythe</div>
+    </div>
+    <div class="score-cell">674<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">15</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">50</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">72</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Kirill Kaprizov</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--fg-faint)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,11.0 11.1,0.0 22.2,11.0 33.3,11.0 44.4,22.0 55.6,11.0 66.7,22.0 77.8,11.0 88.9,11.0 100.0,11.0"></polyline></svg><span class="spark-delta same">—</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('THE ROBFATHER')">
+    <div class="rank-box">
+      <div class="rank-n ">9</div>
+      <div class="rank-mv up">▲1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">THE ROBFATHER</div>
+      <div class="team-owner">Rob Kunka</div>
+    </div>
+    <div class="score-cell">630<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">12</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">44</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">105</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Nikita Kucherov</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,22.0 11.1,22.0 22.2,0.0 33.3,0.0 44.4,0.0 55.6,0.0 66.7,22.0 77.8,0.0 88.9,22.0 100.0,0.0"></polyline></svg><span class="spark-delta up">▲1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('6'7&quot;')">
+    <div class="rank-box">
+      <div class="rank-n ">10</div>
+      <div class="rank-mv up">▲1</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">6'7"</div>
+      <div class="team-owner">Kevin Little</div>
+    </div>
+    <div class="score-cell">607<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">11</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">35</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">104</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">David Pastrňák</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,22.0 11.1,22.0 22.2,22.0 33.3,22.0 44.4,11.0 55.6,11.0 66.7,0.0 77.8,11.0 88.9,22.0 100.0,11.0"></polyline></svg><span class="spark-delta up">▲1</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('FIVE-HOLE NATION')">
+    <div class="rank-box">
+      <div class="rank-n ">11</div>
+      <div class="rank-mv same">—</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">FIVE-HOLE NATION</div>
+      <div class="team-owner">Priya Patel</div>
+    </div>
+    <div class="score-cell">597<span class="decimals"></span></div>
+    <div class="alive-cell "><span class="num">12</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">42</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">105</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Evan Bouchard</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,22.0 11.1,22.0 22.2,22.0 33.3,22.0 44.4,22.0 55.6,22.0 66.7,22.0 77.8,22.0 88.9,0.0 100.0,0.0"></polyline></svg><span class="spark-delta same">—</span></div>
+    <div class="chev">›</div>
+    
+  </div><div class="lb-row " onclick="toggleRow('BLADE RUNNER')">
+    <div class="rank-box">
+      <div class="rank-n ">12</div>
+      <div class="rank-mv same">—</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">BLADE RUNNER</div>
+      <div class="team-owner">Tasha Wong</div>
+    </div>
+    <div class="score-cell">497<span class="decimals">.5</span></div>
+    <div class="alive-cell "><span class="num">15</span><span class="div"> / 15</span></div>
+    <div class="pucks-cell"><span class="num">50</span><span style="color:var(--fg-faint)"> / 50</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">68</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">Nathan MacKinnon</div>
+    </div>
+    <div class="spark-cell"><svg width="100" height="22" viewBox="0 0 100 22"><polyline fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="0.0,0.0 11.1,22.0 22.2,22.0 33.3,22.0 44.4,22.0 55.6,0.0 66.7,22.0 77.8,0.0 88.9,22.0 100.0,22.0"></polyline></svg><span class="spark-delta same">—</span></div>
+    <div class="chev">›</div>
+    
+  </div>
+    </div>
+  </section></div><footer class="shell"><span>50 Pucks · <b>2025–26 Playoffs</b> · Live · 12 entries</span></footer></main></div>
+
+<!-- Tweaks panel -->
+<div class="tweaks on" id="tweaks">
+  <div class="th">
+    <h4>Tweaks</h4>
+    <button onclick="closeTweaks()">×</button>
+  </div>
+  <div class="tb">
+    <div class="tk-row">
+      <div class="tk-lbl">Accent</div>
+      <div class="swatches" id="sw-accent"><button class="sw-btn " style="background:#d4a843" onclick="setTweak('accent','#d4a843')"></button><button class="sw-btn on" style="background:#7aa8ff" onclick="setTweak('accent','#7aa8ff')"></button><button class="sw-btn " style="background:#4fd1a1" onclick="setTweak('accent','#4fd1a1')"></button><button class="sw-btn " style="background:#e4526b" onclick="setTweak('accent','#e4526b')"></button><button class="sw-btn " style="background:#b58bff" onclick="setTweak('accent','#b58bff')"></button></div>
+    </div>
+    <div class="tk-row">
+      <div class="tk-lbl">Theme</div>
+      <div class="seg" id="sw-theme">
+        <button data-v="dark" class="">Broadcast</button>
+        <button data-v="light" class="on">Editorial</button>
+      </div>
+    </div>
+    <div class="tk-row">
+      <div class="tk-lbl">Density</div>
+      <div class="seg" id="sw-density">
+        <button data-v="cozy" class="">Cozy</button>
+        <button data-v="comfortable" class="on">Standard</button>
+      </div>
+    </div>
+    <div class="tk-row">
+      <label class="toggle">
+        <input type="checkbox" id="tk-ticker" checked=""> <span>Live ticker</span>
+      </label>
+    </div>
+    <div class="tk-row">
+      <div class="tk-lbl">Ticker Speed <span class="val" id="tk-speed-val">slow</span></div>
+      <input type="range" id="tk-speed" min="40" max="240" step="10">
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== TWEAKS — edit-mode config ===== */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#4fd1a1",
+  "theme": "light",
+  "density": "comfortable",
+  "ticker": true,
+  "tickerSpeed": 150
+}/*EDITMODE-END*/;
+
+const ACCENTS = [
+  {name:'gold', hex:'#d4a843'},
+  {name:'ice',  hex:'#7aa8ff'},
+  {name:'emerald', hex:'#4fd1a1'},
+  {name:'crimson', hex:'#e4526b'},
+  {name:'violet', hex:'#b58bff'},
+];
+
+let TW = {...TWEAK_DEFAULTS};
+
+function applyTweaks(){
+  document.documentElement.setAttribute('data-theme', TW.theme);
+  document.documentElement.style.setProperty('--gold', TW.accent);
+  document.documentElement.style.setProperty('--gold-soft', lighten(TW.accent, 0.15));
+  document.documentElement.style.setProperty('--gold-deep', darken(TW.accent, 0.4));
+  document.documentElement.style.setProperty('--tick-dur', (TW.tickerSpeed||120)+'s');
+  document.body.style.fontSize = TW.density === 'cozy' ? '13px' : '14px';
+  const tk = document.querySelector('.ticker');
+  if (tk) tk.style.display = TW.ticker ? '' : 'none';
+}
+function lighten(h, a){const c=hexToRgb(h);return `rgb(${Math.min(255,c.r+(255-c.r)*a)|0}, ${Math.min(255,c.g+(255-c.g)*a)|0}, ${Math.min(255,c.b+(255-c.b)*a)|0})`;}
+function darken(h, a){const c=hexToRgb(h);return `rgb(${c.r*(1-a)|0}, ${c.g*(1-a)|0}, ${c.b*(1-a)|0})`;}
+function hexToRgb(h){h=h.replace('#','');return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};}
+
+// Edit mode messaging
+window.addEventListener('message', (ev) => {
+  if (!ev.data || typeof ev.data !== 'object') return;
+  if (ev.data.type === '__activate_edit_mode') { openTweaks(); }
+  if (ev.data.type === '__deactivate_edit_mode') { closeTweaks(); }
+});
+// Announce availability AFTER listener is registered
+window.parent.postMessage({type:'__edit_mode_available'}, '*');
+
+function openTweaks(){ document.getElementById('tweaks').classList.add('on'); buildTweakUI(); }
+function closeTweaks(){ document.getElementById('tweaks').classList.remove('on'); }
+function buildTweakUI(){
+  const sw = document.getElementById('sw-accent');
+  sw.innerHTML = ACCENTS.map(a => `<button class="sw-btn ${a.hex===TW.accent?'on':''}" style="background:${a.hex}" onclick="setTweak('accent','${a.hex}')"></button>`).join('');
+  document.querySelectorAll('#sw-theme button').forEach(b=>{b.classList.toggle('on', b.dataset.v===TW.theme); b.onclick=()=>setTweak('theme',b.dataset.v);});
+  document.querySelectorAll('#sw-density button').forEach(b=>{b.classList.toggle('on', b.dataset.v===TW.density); b.onclick=()=>setTweak('density',b.dataset.v);});
+  document.getElementById('tk-ticker').checked = TW.ticker;
+  document.getElementById('tk-ticker').onchange = e => setTweak('ticker', e.target.checked);
+  const sp = document.getElementById('tk-speed');
+  if (sp){
+    sp.value = TW.tickerSpeed || 120;
+    const lbl = document.getElementById('tk-speed-val');
+    const setLbl = v => { const n = +v; lbl.textContent = n>=180?'very slow':n>=120?'slow':n>=80?'medium':'fast'; };
+    setLbl(sp.value);
+    sp.oninput = e => { setLbl(e.target.value); document.documentElement.style.setProperty('--tick-dur', e.target.value+'s'); };
+    sp.onchange = e => setTweak('tickerSpeed', +e.target.value);
+  }
+}
+function setTweak(k,v){
+  TW[k]=v;
+  applyTweaks();
+  buildTweakUI();
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{[k]:v}}, '*');
+}
+
+/* ===== APP STATE ===== */
+const D = window.PUCKS;
+const entries = D.calcScores(D.SAMPLE_ENTRIES);
+const stats = D.poolStats(entries);
+const rankHist = D.rankHistory(entries);
+const scoreHist = D.scoreHistory(entries);
+
+// Pretend tonight's games: first 3 alive teams, rotated by date-of-month for variety
+const _tnIdx = (new Date().getDate()) % D.ALIVE_2026.length;
+const TONIGHT = new Set([0,1,2,3].map(i => D.ALIVE_2026[(_tnIdx+i)%D.ALIVE_2026.length]));
+
+function ownerColor(owner){
+  let h = 0; for (let i=0;i<owner.length;i++) h = (h*31 + owner.charCodeAt(i))>>>0;
+  return `hsl(${h%360} 55% 52%)`;
+}
+function initials(owner){
+  return owner.split(/\s+/).map(s=>s[0]).slice(0,2).join('').toUpperCase();
+}
+function dailyDelta(e){
+  const sh = scoreHist[e.teamName] || [];
+  const v = (sh[sh.length-1]||e.total) - (sh[sh.length-2]||e.total);
+  return {v: Math.round(v*10)/10};
+}
+function playingTonight(e){
+  const players = e.players.filter(p => p.alive && TONIGHT.has(p.team));
+  return {count: players.length, players};
+}
+function bestEfficiency(){
+  let best = null;
+  for (const e of entries) for (const p of e.players){
+    const eff = p.pucks>0 ? p.score/p.pucks : 0;
+    if (!best || eff > best.eff) best = {...p, eff, tn: e.teamName};
+  }
+  return best;
+}
+
+let state = {
+  tab: localStorage.getItem('pucks_tab') || 'standings',
+  expanded: null,
+  sel: entries[0].teamName,
+  lbSort: 'rank',
+  pFilter: 'all',
+  pSort: 'ownership',
+  chartMain: 'contrib',
+};
+
+function setTab(t){ state.tab = t; localStorage.setItem('pucks_tab', t); render(); }
+function setState(u){ Object.assign(state, u); render(); }
+
+/* ===== RENDER ===== */
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = header() + ticker() + nav() + main();
+  applyTweaks();
+  // charts
+  setTimeout(() => {
+    drawCharts();
+  }, 10);
+}
+
+function header(){
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+  const aliveTeams = D.ALIVE_2026.length;
+  return `
+  <header class="masthead">
+    <div class="shell">
+      <div class="mast-row">
+        <div class="brand">
+          <div class="brand-mark">50</div>
+          <div>
+            <div class="brand-title">Fifty <em>Pucks</em></div>
+            <div class="brand-sub">NHL Playoff Pool · Season 2025–26</div>
+          </div>
+        </div>
+        <div class="mast-meta">
+          <div class="meta-item">
+            <div class="meta-label">Round</div>
+            <div class="meta-value">2 of 4</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Teams Alive</div>
+            <div class="meta-value">${aliveTeams}<span style="color:var(--fg-faint)">/16</span></div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Entries</div>
+            <div class="meta-value">${entries.length}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Updated</div>
+            <div class="meta-value live">${dateStr}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>`;
+}
+
+function ticker(){
+  // Movers and shakers
+  const movers = entries.slice().map((e,i) => ({...e, prev: (rankHist[e.teamName]||[])[8] || e.rank}))
+    .map(e => ({...e, delta: e.prev - e.rank}))
+    .sort((a,b) => Math.abs(b.delta) - Math.abs(a.delta)).slice(0, 6);
+  const topPlayers = stats.pl.slice(0, 4);
+
+  const items = [
+    ...movers.map(m => `<span class="tk"><span class="t">POOL</span> <b>${esc(m.teamName)}</b> <span class="delta ${m.delta>0?'up':m.delta<0?'dn':''}">${m.delta>0?'▲':m.delta<0?'▼':'—'}${Math.abs(m.delta)||''}</span> <span style="color:var(--fg-muted)">now #${m.rank} · ${fmt(m.total)} pts</span></span>`),
+    ...topPlayers.map(p => `<span class="tk"><span class="t">OWN</span> <b>${esc(p.name)}</b> <span style="color:var(--fg-muted)">${p.own}% owned · avg ${fmt(p.as)} pts</span></span>`),
+    `<span class="tk"><span class="t">POT</span> <b>$${stats.pool}</b> <span style="color:var(--fg-muted)">· $${Math.round(stats.pool*.6)} / $${Math.round(stats.pool*.3)} / $${Math.round(stats.pool*.1)}</span></span>`,
+    `<span class="tk"><span class="t">DEAD</span> <b>${stats.deadRate}%</b> <span style="color:var(--fg-muted)">of pucks on eliminated skaters</span></span>`,
+  ];
+  return `<div class="ticker"><div class="ticker-inner">${items.concat(items).join('')}</div></div>`;
+}
+
+function nav(){
+  const tabs = [
+    ['standings','Standings'],
+    ['analytics','Analytics'],
+    ['team','Team Detail'],
+    ['compare','Compare'],
+    ['players','Players'],
+    ['nhl','NHL Stats'],
+    ['projections','Projections'],
+    ['info','Rules'],
+    ['entry','Enter Team'],
+  ];
+  return `<nav class="nav"><div class="shell"><div class="nav-inner">
+    ${tabs.map(([id,l]) => `<button class="nav-btn ${state.tab===id?'on':''}" onclick="setTab('${id}')">${l}${state.tab===id?'<span class="dot"></span>':''}</button>`).join('')}
+  </div></div></nav>`;
+}
+
+function main(){
+  let body = '';
+  switch(state.tab){
+    case 'standings': body = viewStandings(); break;
+    case 'analytics': body = viewAnalytics(); break;
+    case 'team': body = viewTeam(); break;
+    case 'compare': body = viewCompare(); break;
+    case 'players': body = viewPlayers(); break;
+    case 'nhl': body = viewNHL(); break;
+    case 'projections': body = viewProj(); break;
+    case 'info': body = viewInfo(); break;
+    case 'entry': body = viewEntry(); break;
+  }
+  return `<main><div class="shell view">${body}</div><footer class="shell"><span>50 Pucks · <b>2025–26 Playoffs</b> · Live · ${entries.length} entries</span></footer></main>`;
+}
+
+/* ===== VIEWS ===== */
+
+// Helpers
+const esc = s => !s ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt = n => typeof n==='number' ? n.toLocaleString(undefined,{maximumFractionDigits:1}) : '0';
+function splitScore(n){const s = fmt(n); const i = s.indexOf('.'); return i>=0 ? [s.slice(0,i), s.slice(i)] : [s, ''];}
+
+function miniSparkline(data, w, h){
+  if (!data || !data.length) return '';
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pts = data.map((v,i) => {
+    const x = (i/(data.length-1))*w;
+    const y = h - ((v-min)/range)*h;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const last = data[data.length-1], first = data[0];
+  const color = last < first ? 'var(--green)' : last > first ? 'var(--red)' : 'var(--fg-faint)';
+  // rank sparkline: lower is better so invert interpretation is handled outside
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/></svg>`;
+}
+
+function rankChange(team){
+  const hist = rankHist[team] || [];
+  const prev = hist[hist.length-2] || hist[0];
+  const cur = hist[hist.length-1];
+  if (prev == null || cur == null) return {delta:0, text:'—', cls:'same'};
+  const delta = prev - cur;
+  if (delta > 0) return {delta, text:`▲${delta}`, cls:'up'};
+  if (delta < 0) return {delta, text:`▼${-delta}`, cls:'dn'};
+  return {delta:0, text:'—', cls:'same'};
+}
+
+/* ----- Standings ----- */
+function viewStandings(){
+  const strip = `
+  <div class="strip">
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--gold)"></span>Prize Pool</div>
+      <div class="strip-val gold">$${stats.pool}</div>
+      <div class="strip-sub"><b>$${Math.round(stats.pool*.6)}</b> · <b>$${Math.round(stats.pool*.3)}</b> · <b>$${Math.round(stats.pool*.1)}</b></div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--green)"></span>Leader</div>
+      <div class="strip-val">${fmt(entries[0].total)}</div>
+      <div class="strip-sub">${esc(entries[0].teamName)} · <b>+${fmt(entries[0].total - entries[1].total)}</b> lead</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--blue)"></span>Best Pick</div>
+      <div class="strip-val">${fmt(stats.gB?.score||0)}</div>
+      <div class="strip-sub"><b>${esc(stats.gB?.name||'')}</b> · ${esc(stats.gB?.tn||'')}</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--violet)"></span>Pool Concentration</div>
+      <div class="strip-val">${stats.concentration}<span style="color:var(--fg-muted);font-size:18px">%</span></div>
+      <div class="strip-sub">Top 5 most-owned hold this share</div>
+    </div>
+    <div>
+      <div class="strip-label"><span class="pip" style="background:var(--red)"></span>Dead Puck Rate</div>
+      <div class="strip-val">${stats.deadRate}<span style="color:var(--fg-muted);font-size:18px">%</span></div>
+      <div class="strip-sub"><b>${stats.deadPucks}</b> of <b>${stats.totalPucks}</b> pucks eliminated</div>
+    </div>
+  </div>`;
+
+  const toolbar = `<div class="toolbar">
+    <button class="btn ghost" onclick="window.print()">⤓ Export PDF</button>
+    <div class="spacer"></div>
+    <span style="font-size:11px;color:var(--fg-muted)">Click any entry to expand their roster</span>
+  </div>`;
+
+  const rows = entries.map(e => leaderboardRow(e)).join('');
+
+  return `${strip}
+  <section class="sect" style="margin-top:28px">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§01</span> Leaderboard</h2>
+      <div class="sect-hint">Click any entry to reveal their roster breakdown. Sparkline shows rank movement over the last 10 days.</div>
+    </div>
+    ${toolbar}
+    <div class="lb">
+      <div class="lb-head">
+        <div>Rank</div>
+        <div>Team / Owner</div>
+        <div style="text-align:right">Score</div>
+        <div style="text-align:center">Alive / Total</div>
+        <div style="text-align:right">Pucks Left</div>
+        <div style="text-align:right">Best Pick</div>
+        <div>Rank Trajectory</div>
+        <div></div>
+      </div>
+      ${rows}
+    </div>
+  </section>`;
+}
+
+function leaderboardRow(e){
+  const [whole, dec] = splitScore(e.total);
+  const exp = state.expanded === e.teamName;
+  const aliveCrit = e.alive <= e.cnt * 0.33;
+  const rk = rankChange(e.teamName);
+  const hist = rankHist[e.teamName] || [];
+  const inverted = hist.map(r => entries.length - r + 1);
+  const ownerCol = ownerColor(e.owner);
+  const daily = dailyDelta(e);
+  const tonight = playingTonight(e);
+
+  return `<div class="lb-row ${exp?'expanded':''}" onclick="toggleRow('${esc(e.teamName)}')">
+    <div class="rank-box">
+      <div class="rank-n ${e.rank<=3?'r'+e.rank:''}">${e.rank}</div>
+      <div class="rank-mv ${rk.cls}">${rk.text}</div>
+    </div>
+    <div class="team-cell">
+      <div class="team-name">${esc(e.teamName)}</div>
+      <div class="team-owner">${esc(e.owner)}</div>
+    </div>
+    <div class="score-cell">${whole}<span class="decimals">${dec}</span>
+      <div class="daily-delta ${daily.v>0?'up':daily.v<0?'dn':'flat'}">${daily.v>0?'+':''}${fmt(daily.v)} today</div>
+    </div>
+    <div class="alive-cell ${aliveCrit?'crit':''}"><span class="num">${e.alive}</span><span class="div"> / ${e.cnt}</span></div>
+    <div class="pucks-cell"><span class="num">${e.pkR}</span><span style="color:var(--fg-faint)"> / ${e.pkU}</span></div>
+    <div class="pucks-cell" style="text-align:right">
+      <span class="num" style="color:var(--gold)">${fmt(e.bs)}</span>
+      <div style="font-size:10px;color:var(--fg-muted);margin-top:2px">${esc(e.bp||'')}</div>
+    </div>
+    <div class="spark-cell">${miniSparkline(inverted, 100, 22)}<span class="spark-delta ${rk.cls}">${rk.text}</span></div>
+    <div class="chev">›</div>
+    ${exp ? expandedDrawer(e) : ''}
+  </div>`;
+}
+
+function expandedDrawer(e){
+  // Puck bar — sorted by score descending visually
+  const segs = e.players.map(p => {
+    const w = (p.pucks / 50) * 100;
+    const col = D.TM[p.team] || '#666';
+    return `<div class="puck-bar-seg ${p.alive?'':'dead'}" style="width:${w}%;background:${col}" title="${esc(p.name)} · ${p.pucks} pk · ${fmt(p.score)} pts">${p.pucks>=3?p.pucks:''}</div>`;
+  }).join('');
+
+  const mkGroup = (title, list) => {
+    const tot = list.reduce((s,p)=>s+p.score, 0);
+    const rows = list.map(p => `<div class="p">
+      <div class="n"><span class="dot" style="background:${p.alive?'var(--green)':'var(--fg-faint)'}"></span>${esc(p.name)}</div>
+      <div class="t">${p.team}</div>
+      <div class="pk">${p.pucks}pk</div>
+      <div class="mx ${p.mult===2?'m2':p.mult===1.5?'m15':'m1'}">${p.mult}×</div>
+      <div class="sc">${fmt(p.score)}</div>
+    </div>`).join('');
+    return `<div class="group">
+      <div class="g-h"><span>${title}</span><span class="pts">${fmt(tot)} pts</span></div>
+      ${rows}
+    </div>`;
+  };
+
+  const fw = e.players.filter(p=>p.pos==='F');
+  const df = e.players.filter(p=>p.pos==='D');
+
+  // Team exposure (distinct NHL teams represented)
+  const teamSet = new Map();
+  e.players.forEach(p => {
+    if (!teamSet.has(p.team)) teamSet.set(p.team, {pk:0, sc:0, alive:p.alive});
+    const o = teamSet.get(p.team);
+    o.pk += p.pucks; o.sc += p.score;
+  });
+  const teamChips = [...teamSet.entries()].sort((a,b)=>b[1].pk-a[1].pk).slice(0,8).map(([t,d]) =>
+    `<span class="tm-chip ${d.alive?'':'out'}" style="--tc:${D.TM[t]||'#666'}"><b>${t}</b><span>${d.pk}pk</span></span>`
+  ).join('');
+
+  const fwTot = fw.reduce((s,p)=>s+p.score,0);
+  const dfTot = df.reduce((s,p)=>s+p.score,0);
+  const topScorers = e.players.slice().sort((a,b)=>b.score-a.score).slice(0,3);
+  const deadScorers = e.players.filter(p=>!p.alive).sort((a,b)=>b.score-a.score).slice(0,2);
+
+  return `<div class="drawer" onclick="event.stopPropagation()">
+    <div class="mini-roster">
+      ${mkGroup(`Forwards · ${fw.filter(p=>p.alive).length}/${fw.length} alive · ${fmt(fwTot)} pts`, fw)}
+    </div>
+    <div class="mini-roster">
+      ${mkGroup(`Defense · ${df.filter(p=>p.alive).length}/${df.length} alive · ${fmt(dfTot)} pts`, df)}
+    </div>
+    <div class="drawer-side">
+      <div class="drawer-title">Puck Allocation</div>
+      <div class="puck-bar">${segs}</div>
+      <div class="puck-legend">
+        <span class="k"><span class="sw" style="background:var(--green)"></span> alive</span>
+        <span class="k"><span class="sw" style="background:var(--fg-faint);opacity:.4"></span> out</span>
+        <span style="color:var(--fg-muted);margin-left:auto;font-variant-numeric:tabular-nums">${e.pkR}/${e.pkU} pk left</span>
+      </div>
+
+      <div class="drawer-title" style="margin-top:16px">Top Contributors</div>
+      <div class="contrib-list">
+        ${topScorers.map(p => `<div class="cr"><span class="cr-n">${esc(p.name)}</span><span class="cr-t" style="color:${D.TM[p.team]}">${p.team}</span><span class="cr-s">${fmt(p.score)}</span></div>`).join('')}
+      </div>
+
+      ${deadScorers.length ? `<div class="drawer-title" style="margin-top:14px">Lost to Elimination</div>
+      <div class="contrib-list">
+        ${deadScorers.map(p => `<div class="cr dead"><span class="cr-n">${esc(p.name)}</span><span class="cr-t">${p.team}</span><span class="cr-s">−${fmt(p.pucks)} pk</span></div>`).join('')}
+      </div>` : ''}
+
+      <div class="drawer-title" style="margin-top:14px">NHL Teams</div>
+      <div class="tm-chips">${teamChips}</div>
+
+      <a class="open-full" href="#" onclick="event.stopPropagation();setState({tab:'team',sel:'${esc(e.teamName)}'})">Open full roster →</a>
+    </div>
+  </div>`;
+}
+
+function toggleRow(name){
+  state.expanded = (state.expanded === name) ? null : name;
+  render();
+}
+
+/* ----- Analytics ----- */
+function viewAnalytics(){
+  // Team exposure cells
+  const teamPucks = new Map();
+  entries.forEach(e => e.players.forEach(p => {
+    teamPucks.set(p.team, (teamPucks.get(p.team)||0) + p.pucks);
+  }));
+  const maxTeamPk = Math.max(...teamPucks.values());
+  const sortedTeams = [...teamPucks.entries()].sort((a,b) => b[1]-a[1]);
+  const heatCells = sortedTeams.map(([t,v]) => {
+    const alive = D.al(t);
+    const op = (0.25 + (v/maxTeamPk)*0.6).toFixed(2);
+    const col = D.TM[t] || '#666';
+    const mult = D.MULT_2026[t] || 1;
+    return `<div class="heat-cell ${alive?'':'dead'}" style="--bg:${col};--op:${op}">
+      <div class="hc-t">${t}</div>
+      <div class="hc-v">${v}</div>
+      <div class="hc-x">${mult}× · ${alive?'alive':'out'}</div>
+    </div>`;
+  }).join('');
+
+  // Top owned players bars
+  const topOwn = stats.pl.slice(0, 10);
+  const topBars = topOwn.map(p => `<div class="hbar">
+    <div class="lbl">${esc(p.name)}<span style="color:var(--fg-faint);margin-left:6px;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:10px">${p.team}</span></div>
+    <div class="track"><div class="fill" style="width:${p.own}%;background:${p.alive?'var(--gold)':'var(--fg-faint)'}"></div></div>
+    <div class="v">${p.own}%</div>
+  </div>`).join('');
+
+  // Efficiency: pts per puck
+  const effList = entries.map(e => ({n:e.teamName, v: e.pkU>0 ? e.total/e.pkU : 0}))
+    .sort((a,b) => b.v-a.v);
+  const maxEff = effList[0].v;
+  const effBars = effList.map((e,i) => `<div class="hbar">
+    <div class="lbl">${esc(e.n)}</div>
+    <div class="track"><div class="fill" style="width:${(e.v/maxEff*100)}%;background:${i===0?'var(--gold)':'var(--blue)'}"></div></div>
+    <div class="v">${e.v.toFixed(2)}</div>
+  </div>`).join('');
+
+  // ----- KPIs -----
+  const leader = entries[0];
+  const last = entries[entries.length-1];
+  const poolTotal = entries.reduce((s,e)=>s+e.total,0);
+  const poolAvg = poolTotal / entries.length;
+  const totalPucksAlive = entries.reduce((s,e)=>s+e.pkR,0);
+  const totalPucksUsed = entries.reduce((s,e)=>s+e.pkU,0);
+  const aliveShare = (totalPucksAlive / totalPucksUsed * 100);
+  const avgPtsPerPuck = poolTotal / totalPucksUsed;
+  // Chalk vs wildcard score share
+  let mult1=0, mult15=0, mult2=0;
+  entries.forEach(e => e.players.forEach(p => {
+    if (p.mult===2) mult2 += p.score;
+    else if (p.mult===1.5) mult15 += p.score;
+    else mult1 += p.score;
+  }));
+  const wildShare = (mult2 / poolTotal * 100);
+  const leaderGap = leader.total - last.total;
+  const poolDelta = entries.reduce((s,e)=>s+dailyDelta(e).v,0);
+
+  const kpi = (label, value, unit, sub, subClass='') => `<div class="kpi">
+    <div class="k-l">${label}</div>
+    <div class="k-v">${value}${unit?`<span class="u">${unit}</span>`:''}</div>
+    <div class="k-s ${subClass}">${sub}</div>
+  </div>`;
+
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§02</span> Analytics</h2>
+      <div class="sect-hint">Pool-wide KPIs, where the chalk is, who's trending.</div>
+    </div>
+
+    <div class="kpi-strip">
+      ${kpi('Pool Total', fmt(poolTotal), 'pts', `avg ${fmt(poolAvg)} per entry`)}
+      ${kpi('Leader → Last', fmt(leaderGap), 'pts', `${esc(leader.teamName)} on top`)}
+      ${kpi('Pucks Alive', totalPucksAlive, `/ ${totalPucksUsed}`, `${aliveShare.toFixed(0)}% of the pool still playing`)}
+      ${kpi('Pts / Puck', avgPtsPerPuck.toFixed(2), '', `pool-wide efficiency`)}
+      ${kpi('Wildcard Share', wildShare.toFixed(0), '%', `${fmt(mult2)} pts from 2.0× picks`)}
+    </div>
+
+    <div class="grid-12">
+      <div class="card col-8">
+        <div class="card-h">
+          <div class="card-t">Score contribution · by entry</div>
+          <div class="card-sub">stacked by multiplier tier</div>
+        </div>
+        <div class="chart-lg"><canvas id="c-contrib"></canvas></div>
+        <div class="mult-row">
+          <span class="k"><span class="sw" style="background:var(--fg-faint)"></span> 1.0× Favorites</span>
+          <span class="k"><span class="sw" style="background:var(--blue)"></span> 1.5× Middle</span>
+          <span class="k"><span class="sw" style="background:var(--gold)"></span> 2.0× Wild Cards</span>
+        </div>
+      </div>
+      <div class="card col-4">
+        <div class="card-h">
+          <div class="card-t">Points per Puck</div>
+          <div class="card-sub">efficiency · leader in gold</div>
+        </div>
+        ${effBars}
+      </div>
+
+      <div class="card col-12">
+        <div class="card-h">
+          <div class="card-t">Score over time</div>
+          <div class="card-sub">last 10 days · top 6 entries</div>
+        </div>
+        <div class="chart-box"><canvas id="c-score-time"></canvas></div>
+      </div>
+
+      <div class="card col-6">
+        <div class="card-h">
+          <div class="card-t">Most-owned skaters</div>
+          <div class="card-sub">ownership % across 12 entries</div>
+        </div>
+        ${topBars}
+      </div>
+      <div class="card col-6">
+        <div class="card-h">
+          <div class="card-t">Alive vs Eliminated</div>
+          <div class="card-sub">score contribution · what's still in play</div>
+        </div>
+        <div class="chart-box"><canvas id="c-alive"></canvas></div>
+      </div>
+
+      <div class="card col-12">
+        <div class="card-h">
+          <div class="card-t">NHL Team Exposure</div>
+          <div class="card-sub">total pucks across all entries · opacity = volume · hatched = eliminated</div>
+        </div>
+        <div class="heat">${heatCells}</div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ----- Team detail ----- */
+function viewTeam(){
+  const e = entries.find(x => x.teamName === state.sel) || entries[0];
+  const opts = entries.map(x => `<option value="${esc(x.teamName)}" ${x.teamName===e.teamName?'selected':''}>#${x.rank} — ${esc(x.teamName)}</option>`).join('');
+  const rk = rankChange(e.teamName);
+  const aliveClass = e.alive > e.cnt * 0.66 ? 'green' : e.alive > e.cnt * 0.33 ? 'gold' : 'red';
+
+  // Puck bar
+  const segs = e.players.map(p => {
+    const w = (p.pucks/50)*100;
+    const col = D.TM[p.team] || '#666';
+    return `<div class="puck-bar-seg ${p.alive?'':'dead'}" style="width:${w}%;background:${col}" title="${esc(p.name)} · ${p.pucks} pk"></div>`;
+  }).join('');
+
+  const mkTable = (title, list) => {
+    const tot = list.reduce((s,p)=>s+p.score, 0);
+    const rows = list.map(p => `<tr class="${p.alive?'':'dead'}">
+      <td class="nm"><span class="alive-dot ${p.alive?'a':'d'}"></span>${esc(p.name)}</td>
+      <td style="color:${D.TM[p.team]};font-weight:600;font-size:11px;letter-spacing:0.05em">${p.team}</td>
+      <td>${p.gp}</td>
+      <td>${p.g}</td>
+      <td>${p.a}</td>
+      <td style="color:var(--fg)">${p.pts}</td>
+      <td class="m" style="color:${p.mult===2?'var(--gold)':p.mult===1.5?'var(--blue)':'var(--fg-faint)'}">${p.mult}×</td>
+      <td>${p.pucks}</td>
+      <td class="sc">${fmt(p.score)}</td>
+    </tr>`).join('');
+    return `<tbody>
+      <tr class="sec-hd"><td colspan="8">${title}</td><td class="r">${fmt(tot)}</td></tr>
+      ${rows}
+    </tbody>`;
+  };
+
+  const fw = e.players.filter(p=>p.pos==='F');
+  const df = e.players.filter(p=>p.pos==='D');
+
+  return `
+  <div class="td-selector">
+    <span>Viewing:</span>
+    <select class="slim" onchange="setState({sel:this.value})">${opts}</select>
+    <span style="margin-left:auto;color:var(--fg-faint);font-size:11px">${e.rank}/${entries.length} overall</span>
+  </div>
+
+  <div class="td-h">
+    <div>
+      <div class="td-title">
+        <div class="rnk">${e.rank}</div>
+        <div>
+          <div class="nm">${esc(e.teamName)}</div>
+          <div class="own">${esc(e.owner)} <span style="color:var(--fg-faint);margin-left:8px">${rk.cls==='up'?'↑':rk.cls==='dn'?'↓':'•'} ${rk.text} last round</span></div>
+        </div>
+      </div>
+      <div style="margin-top:18px">
+        <div class="puck-bar" style="height:22px">${segs}</div>
+        <div class="puck-legend" style="justify-content:space-between">
+          <span style="color:var(--fg-muted)">${e.pkR} of ${e.pkU} pucks still alive</span>
+          <span style="color:var(--fg-muted)">${e.alive}/${e.cnt} skaters active</span>
+        </div>
+      </div>
+    </div>
+    <div class="td-stats">
+      <div class="td-stat"><div class="l">Score</div><div class="v gold">${fmt(e.total)}</div></div>
+      <div class="td-stat"><div class="l">Gap to #1</div><div class="v">${e.rank===1?'leader':'−'+fmt(entries[0].total-e.total)}</div></div>
+      <div class="td-stat"><div class="l">Best Pick</div><div class="v">${fmt(e.bs)}</div></div>
+      <div class="td-stat"><div class="l">Alive</div><div class="v ${aliveClass}">${e.alive}/${e.cnt}</div></div>
+    </div>
+  </div>
+
+  <table class="roster-tbl">
+    <thead><tr>
+      <th>Player</th><th>Tm</th><th>GP</th><th>G</th><th>A</th><th>PTS</th><th>Mult</th><th>Pk</th><th>Score</th>
+    </tr></thead>
+    ${mkTable('Forwards', fw)}
+    ${mkTable('Defense', df)}
+  </table>`;
+}
+
+/* ----- Compare ----- */
+function viewCompare(){
+  if (!state.cmpA) state.cmpA = entries[0].teamName;
+  if (!state.cmpB) state.cmpB = entries[1].teamName;
+  const A = entries.find(e => e.teamName === state.cmpA) || entries[0];
+  const B = entries.find(e => e.teamName === state.cmpB) || entries[1];
+  const opts = (sel) => entries.map(x => `<option value="${esc(x.teamName)}" ${x.teamName===sel?'selected':''}>#${x.rank} — ${esc(x.teamName)}</option>`).join('');
+
+  const cmpRow = (label, va, vb, isMax=true, fmtFn=fmt) => {
+    const aWin = isMax ? va > vb : va < vb;
+    const bWin = isMax ? vb > va : vb < va;
+    // Bars: normalize to the larger absolute value (handles negatives / ranks)
+    const mx = Math.max(Math.abs(va), Math.abs(vb), 0.001);
+    const wa = (Math.abs(va) / mx * 100).toFixed(1);
+    const wb = (Math.abs(vb) / mx * 100).toFixed(1);
+    return `<div class="cmp-row">
+      <div class="l ${aWin?'w':''}">${fmtFn(va)}</div>
+      <div class="bar-l"><div class="fill ${aWin?'w':''}" style="width:${wa}%"></div></div>
+      <div class="lbl">${label}</div>
+      <div class="bar-r"><div class="fill ${bWin?'w':''}" style="width:${wb}%"></div></div>
+      <div class="r ${bWin?'w':''}">${fmtFn(vb)}</div>
+    </div>`;
+  };
+
+  const setA = new Set(A.players.map(p=>p.name));
+  const setB = new Set(B.players.map(p=>p.name));
+  const shared = A.players.filter(p => setB.has(p.name));
+  const onlyA = A.players.filter(p => !setB.has(p.name));
+  const onlyB = B.players.filter(p => !setA.has(p.name));
+
+  const plist = arr => `<div>${arr.map(p => `<div class="cmp-p ${p.alive?'':'dead'}"><span class="nm">${esc(p.name)} <span style="color:var(--fg-faint);font-size:9px">${p.team}</span></span><span class="pk">${p.pucks}pk · ${fmt(p.score)}</span></div>`).join('')}</div>`;
+
+  const dA = dailyDelta(A), dB = dailyDelta(B);
+
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§03</span> Compare Entries</h2>
+      <div class="sect-hint">Head-to-head breakdown. Winner of each metric is highlighted.</div>
+    </div>
+    <div class="cmp-head">
+      <div class="cmp-side">
+        <select class="slim" style="margin-bottom:10px;width:100%" onchange="setState({cmpA:this.value})">${opts(A.teamName)}</select>
+        <div class="nm">${esc(A.teamName)}</div>
+        <div class="ow">${esc(A.owner)}</div>
+        <div class="sc">${fmt(A.total)}</div>
+        <div class="rk">#${A.rank} · ${dA.v>=0?'+':''}${fmt(dA.v)} today</div>
+      </div>
+      <div class="cmp-vs">vs</div>
+      <div class="cmp-side">
+        <select class="slim" style="margin-bottom:10px;width:100%" onchange="setState({cmpB:this.value})">${opts(B.teamName)}</select>
+        <div class="nm">${esc(B.teamName)}</div>
+        <div class="ow">${esc(B.owner)}</div>
+        <div class="sc">${fmt(B.total)}</div>
+        <div class="rk">#${B.rank} · ${dB.v>=0?'+':''}${fmt(dB.v)} today</div>
+      </div>
+    </div>
+
+    <div class="card">
+      ${cmpRow('Total Score', A.total, B.total)}
+      ${cmpRow('Overall Rank', A.rank, B.rank, false, v=>'#'+v)}
+      ${cmpRow('Alive Skaters', A.alive, B.alive)}
+      ${cmpRow('Pucks Alive', A.pkR, B.pkR)}
+      ${cmpRow('Best Pick Score', A.bs, B.bs)}
+      ${cmpRow('Pts per Puck', A.total/A.pkU, B.total/B.pkU, true, v=>v.toFixed(2))}
+      ${cmpRow('Today', dA.v, dB.v)}
+    </div>
+
+    <div class="cmp-venn">
+      <div class="cmp-col">
+        <h5>Only ${esc(A.teamName)} · ${onlyA.length}</h5>
+        ${plist(onlyA)}
+      </div>
+      <div class="cmp-col shared">
+        <h5>Shared · ${shared.length}</h5>
+        ${plist(shared)}
+      </div>
+      <div class="cmp-col">
+        <h5>Only ${esc(B.teamName)} · ${onlyB.length}</h5>
+        ${plist(onlyB)}
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ----- Players ----- */
+function viewPlayers(){
+  let pl = stats.pl.slice();
+  if (state.pFilter !== 'all') pl = pl.filter(p => p.pos === state.pFilter);
+  if (state.pSort === 'avgScore') pl.sort((a,b)=>b.as-a.as);
+  else if (state.pSort === 'pts') pl.sort((a,b)=>b.pts-a.pts);
+  else pl.sort((a,b)=>b.own-a.own);
+
+  const pill = (k,v,l) => `<button class="pill ${state[k]===v?'on':''}" onclick="setState({${k}:'${v}'})">${l}</button>`;
+
+  const rows = pl.map(p => `<tr class="${p.alive?'':'dead'}">
+    <td class="nm"><span class="alive-dot ${p.alive?'a':'d'}"></span>${esc(p.name)} <span style="color:${p.pos==='D'?'var(--blue)':'var(--gold)'};font-size:9px;margin-left:4px;font-family:'Noto Sans',sans-serif;font-variant-numeric:tabular-nums">${p.pos}</span></td>
+    <td style="color:${D.TM[p.team]};font-weight:600;font-size:11px">${p.team}</td>
+    <td>${p.pts}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+        <div style="width:50px;height:4px;background:var(--ink-700);border-radius:1px;overflow:hidden"><div style="height:100%;width:${p.own}%;background:${p.own===100?'var(--gold)':'var(--blue)'}"></div></div>
+        <span>${p.own}%</span>
+      </div>
+    </td>
+    <td style="color:var(--gold)">${p.ap}</td>
+    <td>${fmt(p.as)}</td>
+    <td class="sc">${fmt(p.ms)}</td>
+  </tr>`).join('');
+
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§04</span> Players</h2>
+      <div class="sect-hint">Every unique skater rostered across all ${entries.length} entries.</div>
+    </div>
+    <div class="filter-row">
+      ${pill('pFilter','all','All')}
+      ${pill('pFilter','F','Forwards')}
+      ${pill('pFilter','D','Defense')}
+      <span style="flex:1"></span>
+      ${pill('pSort','ownership','Most Owned')}
+      ${pill('pSort','avgScore','Avg Score')}
+      ${pill('pSort','pts','Playoff Pts')}
+    </div>
+    <table class="roster-tbl">
+      <thead><tr>
+        <th>Player</th><th>Tm</th><th>PTS</th><th>Ownership</th><th>Avg Pk</th><th>Avg Sc</th><th>Best</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </section>`;
+}
+
+/* ----- NHL Stats ----- */
+function viewNHL(){
+  const nhl = Object.entries(D.PLAYER_STATS)
+    .map(([name,d]) => ({name, ...d, alive:D.al(d.team)}))
+    .filter(p => p.alive)
+    .sort((a,b)=>b.pts-a.pts);
+  const rows = nhl.map((p,i) => `<tr>
+    <td style="color:var(--fg-faint);text-align:right">${i+1}</td>
+    <td class="nm">${esc(p.name)}</td>
+    <td style="color:${D.TM[p.team]};font-weight:600;font-size:11px">${p.team}</td>
+    <td>${p.pos}</td>
+    <td>${p.gp}</td>
+    <td>${p.g}</td>
+    <td>${p.a}</td>
+    <td class="sc" style="color:var(--gold)">${p.pts}</td>
+  </tr>`).join('');
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§05</span> NHL Stats · Live</h2>
+      <div class="sect-hint">${nhl.length} skaters from alive playoff teams. Updated each morning.</div>
+    </div>
+    <table class="roster-tbl">
+      <thead><tr>
+        <th style="text-align:right">#</th><th>Player</th><th>Tm</th><th>Pos</th><th>GP</th><th>G</th><th>A</th><th>PTS</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </section>`;
+}
+
+/* ----- Projections ----- */
+function viewProj(){
+  // Simple lightweight projection: mean = current + remaining_games * ppg_alive * mult * pucks
+  const proj = entries.map(e => {
+    let mean = e.total, variance = 0;
+    e.players.forEach(p => {
+      if (!p.alive) return;
+      const ppg = p.gp>0 ? p.pts/p.gp : 0.6;
+      const remGames = 14 - p.gp; // roughly remaining
+      const add = Math.max(0, ppg * remGames) * p.mult * p.pucks;
+      mean += add;
+      variance += Math.pow(add*0.3, 2);
+    });
+    const sd = Math.sqrt(variance);
+    return {tn:e.teamName, cur:e.total, mn:Math.round(mean), p10:Math.round(mean - sd*1.28), p90:Math.round(mean + sd*1.28)};
+  });
+  // Win probability: soft-max on projected means
+  const maxMn = Math.max(...proj.map(p=>p.mn));
+  const scale = 12;
+  const weights = proj.map(p => Math.exp((p.mn - maxMn)/scale));
+  const sumW = weights.reduce((a,b)=>a+b,0);
+  proj.forEach((p,i) => p.wp = Math.round(weights[i]/sumW * 1000)/10);
+  proj.sort((a,b)=>b.mn-a.mn);
+
+  const bars = proj.map((p,i) => `<div class="proj-bar">
+    <div class="l">${esc(p.tn)}</div>
+    <div class="t"><div class="f ${i===0?'':'sub'}" style="width:${Math.max(p.wp,2)}%">${p.wp>=4?p.wp+'%':''}</div></div>
+    <div class="v">${p.wp}%</div>
+  </div>`).join('');
+
+  const tblRows = proj.map(p => `<tr>
+    <td class="nm">${esc(p.tn)}</td>
+    <td>${fmt(p.cur)}</td>
+    <td class="sc">${fmt(p.mn)}</td>
+    <td style="color:var(--red)">${fmt(p.p10)}</td>
+    <td style="color:var(--green)">${fmt(p.p90)}</td>
+    <td class="sc" style="color:${p.wp>=25?'var(--gold)':'var(--fg-dim)'}">${p.wp}%</td>
+  </tr>`).join('');
+
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§06</span> Projections</h2>
+      <div class="sect-hint">Projected final scores based on per-game pace × remaining games × multiplier × pucks.</div>
+    </div>
+    <div class="grid-12">
+      <div class="card col-6">
+        <div class="card-h"><div class="card-t">Win Probability</div><div class="card-sub">based on projected mean</div></div>
+        ${bars}
+      </div>
+      <div class="card col-6">
+        <div class="card-h"><div class="card-t">Distribution</div><div class="card-sub">10th — mean — 90th percentile</div></div>
+        <table class="roster-tbl">
+          <thead><tr><th>Team</th><th>Now</th><th>Mean</th><th>10th</th><th>90th</th><th>Win%</th></tr></thead>
+          <tbody>${tblRows}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ----- Info / Rules ----- */
+function viewInfo(){
+  const ms = D.MULT_2026;
+  const tiers = {1:[], 1.5:[], 2:[]};
+  Object.entries(ms).forEach(([t,m]) => tiers[m].push(t));
+
+  const tierCard = (mult, cls, label) => `<div class="tier ${cls}">
+    <div class="t-h">
+      <div class="t-x">${mult}×</div>
+      <div class="t-l">${label}</div>
+    </div>
+    <div class="t-teams">${tiers[mult].sort().map(t => `<span class="${D.al(t)?'':'dead'}">${t}</span>`).join('')}</div>
+  </div>`;
+
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§07</span> Rules & Scoring</h2>
+      <div class="sect-hint">How 50 Pucks works. Fifty pucks to spread across fifteen skaters — every point multiplies.</div>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule"><div class="num-big">01</div><div class="t">10 forwards · 5 defense</div><div class="d">Every entry drafts 15 unique skaters from any playoff team.</div></div>
+      <div class="rule"><div class="num-big">02</div><div class="t">50 pucks, 1–6 per player</div><div class="d">Distribute exactly 50 pucks across your 15 picks. Min 1, max 6 per skater.</div></div>
+      <div class="rule"><div class="num-big">03</div><div class="t">Multipliers per team</div><div class="d">Wild cards earn 2.0×, middle seeds 1.5×, division winners 1.0×. Reward upside.</div></div>
+      <div class="rule"><div class="num-big">04</div><div class="t">$50 per entry</div><div class="d">60% / 30% / 10% split between the top three finishers.</div></div>
+    </div>
+
+    <div class="formula">
+      <b>Score</b> = Playoff Points × Team Multiplier × Pucks Assigned
+      <div class="example">Example: <b>McDavid</b> · 22 pts · EDM <b>1.5×</b> · 6 pucks → <b>22 × 1.5 × 6 = 198</b></div>
+    </div>
+
+    <h3 class="sect-t" style="font-size:18px;margin:32px 0 16px"><span class="ix">§</span> Multiplier Tiers</h3>
+    <div class="tier-grid">
+      ${tierCard(2, 'wc', 'Wild Cards')}
+      ${tierCard(1.5, 'mid', 'Middle Seeds')}
+      ${tierCard(1, 'fav', 'Favorites')}
+    </div>
+  </section>`;
+}
+
+/* ----- Entry form (placeholder in redesign) ----- */
+function viewEntry(){
+  return `
+  <section class="sect">
+    <div class="sect-h">
+      <h2 class="sect-t"><span class="ix">§08</span> Enter Your Team</h2>
+      <div class="sect-hint">Entry form from the live site is preserved — this view is a placeholder while the redesign focuses on data views.</div>
+    </div>
+    <div class="placeholder-note">
+      <h3>Entry form lives on the production site</h3>
+      <p>The multi-step draft form (team name → forwards → defense → pucks → submit) is intact in the original app and will be re-skinned in the same broadcast dark style once you approve the data-view direction. Focus of this redesign: the leaderboard and analytics views above.</p>
+    </div>
+  </section>`;
+}
+
+/* ===== CHARTS ===== */
+function drawCharts(){
+  if (state.tab !== 'analytics') return;
+  const tx = {color: getCSS('--fg-muted'), font:{family:'Inter', size:10}};
+  const gr = {color: getCSS('--line-soft'), drawTicks:false};
+  const axis = { ticks: tx, grid: gr, border:{color:getCSS('--line-soft')} };
+
+  // Contrib stacked bar
+  const el1 = document.getElementById('c-contrib');
+  if (el1){
+    const labels = entries.map(e => e.teamName.length>14?e.teamName.slice(0,13)+'…':e.teamName);
+    const m1  = entries.map(e => Math.round(e.players.filter(p=>p.mult===1).reduce((s,p)=>s+p.score,0)));
+    const m15 = entries.map(e => Math.round(e.players.filter(p=>p.mult===1.5).reduce((s,p)=>s+p.score,0)));
+    const m2  = entries.map(e => Math.round(e.players.filter(p=>p.mult===2).reduce((s,p)=>s+p.score,0)));
+    new Chart(el1, {
+      type:'bar',
+      data:{labels, datasets:[
+        {label:'1.0×', data:m1, backgroundColor:getCSS('--fg-faint'), borderRadius:2, barThickness:18},
+        {label:'1.5×', data:m15, backgroundColor:getCSS('--blue'), borderRadius:2, barThickness:18},
+        {label:'2.0×', data:m2, backgroundColor:getCSS('--gold'), borderRadius:2, barThickness:18},
+      ]},
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{backgroundColor:getCSS('--ink-700'), titleColor:getCSS('--fg'), bodyColor:getCSS('--fg-dim')}}, scales:{x:{stacked:true, ...axis}, y:{stacked:true, ...axis}}}
+    });
+  }
+
+  // Score over time (top 6)
+  const el2 = document.getElementById('c-score-time');
+  if (el2){
+    const top6 = entries.slice(0, 6);
+    const labels = Array.from({length:10},(_,i)=>`D-${9-i}`);
+    const palette = [getCSS('--gold'), getCSS('--blue'), getCSS('--green'), getCSS('--violet'), getCSS('--red'), '#f0c987'];
+    const datasets = top6.map((e,i) => ({
+      label: e.teamName.length>14?e.teamName.slice(0,13)+'…':e.teamName,
+      data: scoreHist[e.teamName],
+      borderColor: palette[i],
+      backgroundColor: palette[i]+'22',
+      tension: 0.3,
+      borderWidth: 2,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      fill: i===0,
+    }));
+    new Chart(el2, {
+      type:'line',
+      data:{labels, datasets},
+      options:{responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{...tx, boxWidth:8, boxHeight:8, usePointStyle:true, pointStyle:'circle'}, position:'bottom'},
+        tooltip:{backgroundColor:getCSS('--ink-700'), titleColor:getCSS('--fg'), bodyColor:getCSS('--fg-dim'), mode:'index', intersect:false}},
+        scales:{x:axis, y:axis}, interaction:{mode:'index', intersect:false}
+      }
+    });
+  }
+
+  // Alive vs eliminated
+  const el3 = document.getElementById('c-alive');
+  if (el3){
+    const labels = entries.map(e => e.teamName.length>12?e.teamName.slice(0,11)+'…':e.teamName);
+    const alv = entries.map(e => Math.round(e.players.filter(p=>p.alive).reduce((s,p)=>s+p.score,0)));
+    const ded = entries.map(e => Math.round(e.players.filter(p=>!p.alive).reduce((s,p)=>s+p.score,0)));
+    new Chart(el3, {
+      type:'bar',
+      data:{labels, datasets:[
+        {label:'Alive', data:alv, backgroundColor:getCSS('--gold'), borderRadius:2, barThickness:14},
+        {label:'Eliminated', data:ded, backgroundColor:getCSS('--fg-faint'), borderRadius:2, barThickness:14},
+      ]},
+      options:{responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{legend:{labels:{...tx, boxWidth:8, usePointStyle:true, pointStyle:'rect'}, position:'bottom'}, tooltip:{backgroundColor:getCSS('--ink-700'), titleColor:getCSS('--fg'), bodyColor:getCSS('--fg-dim')}},
+        scales:{x:{stacked:true, ...axis}, y:{stacked:true, ...axis, ticks:{...tx, font:{size:9}}}}
+      }
+    });
+  }
+
+  // Scatter
+  const el4 = document.getElementById('c-scatter');
+  if (el4){
+    new Chart(el4, {
+      type:'bubble',
+      data:{datasets:[{
+        data: entries.map(e => ({x: e.pkR, y: e.total, r: Math.max(e.alive*1.2, 5), tn: e.teamName})),
+        backgroundColor: entries.map((_,i) => i===0?getCSS('--gold'):getCSS('--blue')+'66'),
+        borderColor: entries.map((_,i) => i===0?getCSS('--gold'):getCSS('--blue')),
+        borderWidth: 1.5
+      }]},
+      options:{responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{
+          backgroundColor:getCSS('--ink-700'), titleColor:getCSS('--fg'), bodyColor:getCSS('--fg-dim'),
+          callbacks:{label: c => `${c.raw.tn}: ${c.raw.y} pts · ${c.raw.x} pk left`}
+        }},
+        scales:{
+          x:{...axis, title:{display:true, text:'Pucks Remaining', color:getCSS('--fg-muted'), font:{size:10}}},
+          y:{...axis, title:{display:true, text:'Current Score', color:getCSS('--fg-muted'), font:{size:10}}},
+        }
+      }
+    });
+  }
+}
+function getCSS(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* ===== BOOT ===== */
+render();
+</script>
+
+
+
+</body></html>

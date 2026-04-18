@@ -123,7 +123,7 @@ body.dark-theme .tab-off{color:var(--muted)!important}
 body.dark-theme .tab-off:hover{color:#fff!important}
 body.dark-theme .trow:hover,body.dark-theme .lb-row2:hover{background:rgba(88,200,154,.08)!important}
 body.dark-theme canvas{filter:saturate(.95)}
-.settings-btn{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface);white-space:nowrap}
+.settings-btn{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface);white-space:nowrap;line-height:1;height:32px;display:inline-flex;align-items:center}
 .settings-btn:hover{color:var(--text);border-color:var(--accent)}
 .settings-backdrop{position:fixed;inset:0;background:rgba(15,23,41,.48);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
 .settings-panel{width:min(520px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 60px rgba(2,6,23,.25);overflow:hidden}
@@ -166,6 +166,7 @@ const SEASONS={
   2026:{id:'20252026',fee:50,sheetUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vRB40X80kl-o3umS5nTtxa0ln4mYxj8u4PXdXdBTIIQ0fSOL5EtIIMzxZkSp_VDYnADhyIoMPxgaloK/pub?output=csv',mult:{CAR:1.0,BUF:1.0,COL:1.0,VEG:1.0,TBL:1.5,MTL:1.5,PIT:1.5,PHI:1.5,DAL:1.5,MIN:1.5,EDM:1.5,ANA:1.5,BOS:2.0,OTT:2.0,UTA:2.0,LAK:2.0},alive:['CAR','BUF','COL','VEG','TBL','MTL','PIT','PHI','DAL','MIN','EDM','ANA','BOS','OTT','UTA','LAK']},
 };
 const CFG={title:'50 Pucks',pk:50,minPk:1,maxPk:6,fwd:10,def:5,cur:'CAD',pay:[{p:1,l:'1st',r:.6},{p:2,l:'2nd',r:.3},{p:3,l:'3rd',r:.1}]};
+const SHOW_ENTRY_TAB=false; // change to true to show the Enter Team tab
 const TM={ANA:'#F47A38',BOS:'#FFB81C',BUF:'#003087',CGY:'#D2001C',CAR:'#CC0000',CHI:'#CF0A2C',COL:'#6F263D',CBJ:'#002654',DAL:'#006847',DET:'#CE1126',EDM:'#FF4C00',FLA:'#C8102E',LAK:'#A2AAAD',MIN:'#154734',MTL:'#AF1E2D',NSH:'#FFB81C',NJD:'#CE1126',NYI:'#00539B',NYR:'#0038A8',OTT:'#C52032',PHI:'#F74902',PIT:'#FCB514',SJS:'#006D75',SEA:'#001628',STL:'#002F87',TBL:'#002868',TOR:'#00205B',UTA:'#71AFE5',VAN:'#00205B',VGK:'#B4975A',WSH:'#041E42',WPG:'#041E42'};
 const AM={VEG:'VGK',WAS:'WSH',TB:'TBL',NJ:'NJD',SJ:'SJS',LA:'LAK',CLB:'CBJ'};
 
@@ -1034,7 +1035,7 @@ function compareMetricRow(label,aVal,bVal,{fmtFn=(v)=>fmt(v),higherBetter=true}=
 function render(){
   const a=document.getElementById('app');
   const yrs=Object.keys(SEASONS).map(y=>`<option value="${y}" ${parseInt(y)===S.yr?'selected':''}>${y}</option>`).join('');
-  let tabs=[['entry','Enter Team']];
+  let tabs=SHOW_ENTRY_TAB ? [['entry','Enter Team']] : [];
   if(S.yr===2025){
     tabs.push(['leaderboard','Standings'],['team','Teams'],['compare','Compare'],['chart','Analytics'],['players','Players'],['simulation','Projections'],['stats','NHL Stats'],['info','Info']);
   }
@@ -1043,6 +1044,7 @@ function render(){
   }
   if(S.adminAuth){tabs.push(['admin','Admin']);}
   tabs=tabs.filter(([id])=>!S.hiddenTabs.has(id));
+  if(!tabs.some(([id])=>id===S.tab)){S.tab=tabs[0]?.[0]||'leaderboard';}
   const ticker=tickerItems();
   applyTheme();
   a.innerHTML=`
@@ -1068,7 +1070,7 @@ function render(){
     </div>
   </div>
 </header>
-<div class="ticker"><div class="shell-max"><div class="ticker-track">${[...ticker,...ticker].join('')}</div></div></div>
+${S.tickerOn?`<div class="ticker"><div class="shell-max"><div class="ticker-track ${S.tickerSpeed==='fast'?'fast':S.tickerSpeed==='slow'?'slow':''}">${[...ticker,...ticker].join('')}</div></div></div>`:''}
 <nav class="editorial-nav">
   <div class="shell-max px-3 sm:px-8 flex gap-0 overflow-x-auto" style="-ms-overflow-style:none;scrollbar-width:none;-webkit-overflow-scrolling:touch">
     ${tabs.map(([id,l])=>`<button onclick="set({tab:'${id}'})" class="px-3 sm:px-5 py-3 text-[11px] sm:text-[12px] uppercase tracking-[0.18em] whitespace-nowrap ${S.tab===id?'tab-on':'tab-off'}">${l}${id==='leaderboard'?'<span class="ml-1 text-[#58c89a]">•</span>':''}</button>`).join('')}
@@ -1076,6 +1078,7 @@ function render(){
   </div>
 </nav>
 <main class="shell-max px-3 sm:px-8 py-5 fade-in w-full min-w-0">${tabC()}</main>
+${S.showSettings?settingsModal():''}
 <footer class="border-t border-[#d9d1bf] py-4 mt-4"><p class="text-center text-slate-500 text-[11px] tracking-[0.14em] uppercase">${CFG.title} · ${S.yr}${_src?' · '+_src:''}</p></footer>`;
   if(S._chart){try{S._chart.destroy();}catch{}}S._chart=null;
   setTimeout(drawChart,20);

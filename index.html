@@ -478,7 +478,7 @@ footer b{color:var(--gold)}
 .hide{display:none}
 </style>
 </head>
-<body data-cc-id="cc-1" style="font-size: 14px; cursor: crosshair; font-family: sans-serif;">
+<body>
 
 <div id="app">
   <header class="masthead">
@@ -513,6 +513,7 @@ footer b{color:var(--gold)}
     </div>
   </header><div class="ticker"><div class="ticker-inner"><span class="tk"><span class="t">POOL</span> <b>DON'T STOP WIELIEVIN'</b> <span class="delta up">▲2</span> <span style="color:var(--fg-muted)">now #7 · 739.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>COWABUNGAR DUDE</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #2 · 947.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>WILKES-BARRE ALL STARS</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #3 · 944 pts</span></span><span class="tk"><span class="t">POOL</span> <b>IT'S THE CUP</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #5 · 853 pts</span></span><span class="tk"><span class="t">POOL</span> <b>POKÉ-CHECK</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #6 · 852.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>THE ROBFATHER</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #9 · 630.5 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Cale Makar</b> <span style="color:var(--fg-muted)">100% owned · avg 56.3 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Nathan MacKinnon</b> <span style="color:var(--fg-muted)">75% owned · avg 73.7 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Connor McDavid</b> <span style="color:var(--fg-muted)">67% owned · avg 160.9 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Evan Bouchard</b> <span style="color:var(--fg-muted)">58% owned · avg 84 pts</span></span><span class="tk"><span class="t">POT</span> <b>$600</b> <span style="color:var(--fg-muted)">· $360 / $180 / $60</span></span><span class="tk"><span class="t">DEAD</span> <b>8%</b> <span style="color:var(--fg-muted)">of pucks on eliminated skaters</span></span><span class="tk"><span class="t">POOL</span> <b>DON'T STOP WIELIEVIN'</b> <span class="delta up">▲2</span> <span style="color:var(--fg-muted)">now #7 · 739.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>COWABUNGAR DUDE</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #2 · 947.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>WILKES-BARRE ALL STARS</b> <span class="delta dn">▼1</span> <span style="color:var(--fg-muted)">now #3 · 944 pts</span></span><span class="tk"><span class="t">POOL</span> <b>IT'S THE CUP</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #5 · 853 pts</span></span><span class="tk"><span class="t">POOL</span> <b>POKÉ-CHECK</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #6 · 852.5 pts</span></span><span class="tk"><span class="t">POOL</span> <b>THE ROBFATHER</b> <span class="delta up">▲1</span> <span style="color:var(--fg-muted)">now #9 · 630.5 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Cale Makar</b> <span style="color:var(--fg-muted)">100% owned · avg 56.3 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Nathan MacKinnon</b> <span style="color:var(--fg-muted)">75% owned · avg 73.7 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Connor McDavid</b> <span style="color:var(--fg-muted)">67% owned · avg 160.9 pts</span></span><span class="tk"><span class="t">OWN</span> <b>Evan Bouchard</b> <span style="color:var(--fg-muted)">58% owned · avg 84 pts</span></span><span class="tk"><span class="t">POT</span> <b>$600</b> <span style="color:var(--fg-muted)">· $360 / $180 / $60</span></span><span class="tk"><span class="t">DEAD</span> <b>8%</b> <span style="color:var(--fg-muted)">of pucks on eliminated skaters</span></span></div></div><nav class="nav"><div class="shell"><div class="nav-inner">
     <button class="nav-btn on" onclick="setTab('standings')">Standings<span class="dot"></span></button><button class="nav-btn " onclick="setTab('analytics')">Analytics</button><button class="nav-btn " onclick="setTab('team')">Team Detail</button><button class="nav-btn " onclick="setTab('players')">Players</button><button class="nav-btn " onclick="setTab('nhl')">NHL Stats</button><button class="nav-btn " onclick="setTab('projections')">Projections</button><button class="nav-btn " onclick="setTab('info')">Rules</button><button class="nav-btn " onclick="setTab('entry')">Enter Team</button>
+    <button class="nav-btn" onclick="openTweaks()" style="margin-left:auto">⚙ Tweaks</button>
   </div></div></nav><main><div class="shell view">
   <div class="strip">
     <div>
@@ -790,7 +791,7 @@ footer b{color:var(--gold)}
   </section></div><footer class="shell"><span>50 Pucks · <b>2025–26 Playoffs</b> · Live · 12 entries</span></footer></main></div>
 
 <!-- Tweaks panel -->
-<div class="tweaks on" id="tweaks">
+<div class="tweaks" id="tweaks">
   <div class="th">
     <h4>Tweaks</h4>
     <button onclick="closeTweaks()">×</button>
@@ -896,15 +897,15 @@ function setTweak(k,v){
 }
 
 /* ===== APP STATE ===== */
-const D = window.PUCKS;
-const entries = D.calcScores(D.SAMPLE_ENTRIES);
-const stats = D.poolStats(entries);
-const rankHist = D.rankHistory(entries);
-const scoreHist = D.scoreHistory(entries);
+const D = window.PUCKS || null;
+const entries = D ? D.calcScores(D.SAMPLE_ENTRIES) : [];
+const stats   = D ? D.poolStats(entries)           : {pl:[]};
+const rankHist  = D ? D.rankHistory(entries)       : {};
+const scoreHist = D ? D.scoreHistory(entries)      : {};
 
 // Pretend tonight's games: first 3 alive teams, rotated by date-of-month for variety
-const _tnIdx = (new Date().getDate()) % D.ALIVE_2026.length;
-const TONIGHT = new Set([0,1,2,3].map(i => D.ALIVE_2026[(_tnIdx+i)%D.ALIVE_2026.length]));
+const _tnIdx = D ? (new Date().getDate()) % D.ALIVE_2026.length : 0;
+const TONIGHT = D ? new Set([0,1,2,3].map(i => D.ALIVE_2026[(_tnIdx+i)%D.ALIVE_2026.length])) : new Set();
 
 function ownerColor(owner){
   let h = 0; for (let i=0;i<owner.length;i++) h = (h*31 + owner.charCodeAt(i))>>>0;
@@ -934,15 +935,15 @@ function bestEfficiency(){
 let state = {
   tab: localStorage.getItem('pucks_tab') || 'standings',
   expanded: null,
-  sel: entries[0].teamName,
+  sel: entries[0]?.teamName || '',
   lbSort: 'rank',
   pFilter: 'all',
   pSort: 'ownership',
   chartMain: 'contrib',
 };
 
-function setTab(t){ state.tab = t; localStorage.setItem('pucks_tab', t); render(); }
-function setState(u){ Object.assign(state, u); render(); }
+function setTab(t){ state.tab = t; localStorage.setItem('pucks_tab', t); if(D) render(); }
+function setState(u){ Object.assign(state, u); if(D) render(); }
 
 /* ===== RENDER ===== */
 function render(){
@@ -1023,6 +1024,7 @@ function nav(){
   ];
   return `<nav class="nav"><div class="shell"><div class="nav-inner">
     ${tabs.map(([id,l]) => `<button class="nav-btn ${state.tab===id?'on':''}" onclick="setTab('${id}')">${l}${state.tab===id?'<span class="dot"></span>':''}</button>`).join('')}
+    <button class="nav-btn" onclick="openTweaks()" style="margin-left:auto">⚙ Tweaks</button>
   </div></div></nav>`;
 }
 
@@ -1847,7 +1849,7 @@ function drawCharts(){
 function getCSS(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 
 /* ===== BOOT ===== */
-render();
+if(D) render(); else applyTweaks();
 </script>
 
 

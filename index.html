@@ -174,6 +174,794 @@ const SEASONS={
 };
 const CFG={title:'50 Pucks',pk:50,minPk:1,maxPk:6,fwd:10,def:5,cur:'CAD',pay:[{p:1,l:'1st',r:.6},{p:2,l:'2nd',r:.3},{p:3,l:'3rd',r:.1}]};
 const SHOW_ENTRY_TAB=false; // change to true to show the Enter Team tab
+const EMBEDDED_ENTRIES_2026=[
+  {
+    "teamName": "Creative Name Here",
+    "owner": "Shaun Wilkes",
+    "players": [
+      {
+        "name": "Pavel Zacha",
+        "team": "BOS",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "David Pastrňák",
+        "team": "BOS",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Viktor Arvidsson",
+        "team": "BOS",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Leon Draisaitl",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Seth Jarvis",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Andrei Svechnikov",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Sebastian Aho",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Zach Hyman",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Charlie McAvoy",
+        "team": "BOS",
+        "position": "D",
+        "pucks": 5
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Alexander Nikishin",
+        "team": "CAR",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Hampus Lindholm",
+        "team": "BOS",
+        "position": "D",
+        "pucks": 1
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Kevin's Team",
+    "owner": "Kevin Little",
+    "players": [
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 5
+      },
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Jason Robertson",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Matt Boldy",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Brayden Point",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Cole Caufield",
+        "team": "MTL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Nick Suzuki",
+        "team": "MTL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Sidney Crosby",
+        "team": "PIT",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Adrian Kempe",
+        "team": "LAK",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Erik Karlsson",
+        "team": "PIT",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Lane Hutson",
+        "team": "MTL",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Shayne Gostisbehere",
+        "team": "CAR",
+        "position": "D",
+        "pucks": 2
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 4
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Canadian Taxpayer",
+    "owner": "Adam Mazza",
+    "players": [
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Sebastian Aho",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Mikko Rantanen",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Jake Guentzel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Tage Thompson",
+        "team": "BUF",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Leon Draisaitl",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Martin Nečas",
+        "team": "COL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Sidney Crosby",
+        "team": "PIT",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Erik Karlsson",
+        "team": "PIT",
+        "position": "D",
+        "pucks": 4
+      },
+      {
+        "name": "Quinn Hughes",
+        "team": "MIN",
+        "position": "D",
+        "pucks": 2
+      },
+      {
+        "name": "Rasmus Dahlin",
+        "team": "BUF",
+        "position": "D",
+        "pucks": 3
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Wingers",
+    "owner": "Joel",
+    "players": [
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Martin Nečas",
+        "team": "COL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Jason Robertson",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Wyatt Johnston",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Mikko Rantanen",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Leon Draisaitl",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "David Pastrňák",
+        "team": "BOS",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 5
+      },
+      {
+        "name": "Jake Guentzel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 5
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 5
+      },
+      {
+        "name": "Erik Karlsson",
+        "team": "PIT",
+        "position": "D",
+        "pucks": 2
+      },
+      {
+        "name": "Darren Raddysh",
+        "team": "TBL",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Miro Heiskanen",
+        "team": "DAL",
+        "position": "D",
+        "pucks": 1
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "COWABUNGAR DUDE",
+    "owner": "Matt Ungar",
+    "players": [
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Leon Draisaitl",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Sebastian Aho",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Kirill Kaprizov",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Sidney Crosby",
+        "team": "PIT",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Martin Nečas",
+        "team": "COL",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Seth Jarvis",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Jack Eichel",
+        "team": "VGK",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Darren Raddysh",
+        "team": "TBL",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Quinn Hughes",
+        "team": "MIN",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Rasmus Dahlin",
+        "team": "BUF",
+        "position": "D",
+        "pucks": 1
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Shots Fired",
+    "owner": "Rob Kunka",
+    "players": [
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Martin Nečas",
+        "team": "COL",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Leon Draisaitl",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Jake Guentzel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Brayden Point",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Brandon Hagel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Tim Stützle",
+        "team": "OTT",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Brady Tkachuk",
+        "team": "OTT",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 4
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Charlie McAvoy",
+        "team": "BOS",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Darren Raddysh",
+        "team": "TBL",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Jake Sanderson",
+        "team": "OTT",
+        "position": "D",
+        "pucks": 1
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Skip Sharpe",
+    "owner": "Adamo",
+    "players": [
+      {
+        "name": "Nathan MacKinnon",
+        "team": "COL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Kirill Kaprizov",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Martin Nečas",
+        "team": "COL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Wyatt Johnston",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Jason Robertson",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Connor McDavid",
+        "team": "EDM",
+        "position": "F",
+        "pucks": 5
+      },
+      {
+        "name": "Jake Guentzel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Mikko Rantanen",
+        "team": "DAL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Seth Jarvis",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 1
+      },
+      {
+        "name": "Cale Makar",
+        "team": "COL",
+        "position": "D",
+        "pucks": 5
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 2
+      },
+      {
+        "name": "Quinn Hughes",
+        "team": "MIN",
+        "position": "D",
+        "pucks": 4
+      },
+      {
+        "name": "Darren Raddysh",
+        "team": "TBL",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Miro Heiskanen",
+        "team": "DAL",
+        "position": "D",
+        "pucks": 2
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  },
+  {
+    "teamName": "Leafs567",
+    "owner": "Mariusz",
+    "players": [
+      {
+        "name": "Kirill Kaprizov",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Matt Boldy",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Joel Eriksson Ek",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Mats Zuccarello",
+        "team": "MIN",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Jake Guentzel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 3
+      },
+      {
+        "name": "Brayden Point",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 4
+      },
+      {
+        "name": "Nikita Kucherov",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 6
+      },
+      {
+        "name": "Brandon Hagel",
+        "team": "TBL",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Sebastian Aho",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Andrei Svechnikov",
+        "team": "CAR",
+        "position": "F",
+        "pucks": 2
+      },
+      {
+        "name": "Quinn Hughes",
+        "team": "MIN",
+        "position": "D",
+        "pucks": 6
+      },
+      {
+        "name": "Brock Faber",
+        "team": "MIN",
+        "position": "D",
+        "pucks": 2
+      },
+      {
+        "name": "Darren Raddysh",
+        "team": "TBL",
+        "position": "D",
+        "pucks": 3
+      },
+      {
+        "name": "Shayne Gostisbehere",
+        "team": "CAR",
+        "position": "D",
+        "pucks": 1
+      },
+      {
+        "name": "Evan Bouchard",
+        "team": "EDM",
+        "position": "D",
+        "pucks": 1
+      }
+    ],
+    "total": 50,
+    "rank": 0
+  }
+];
+const USE_MANUAL_DATA_BACKUP=false; // set to true and redeploy to use the Google Sheet Data tab
+const MANUAL_DATA_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vRB40X80kl-o3umS5nTtxa0ln4mYxj8u4PXdXdBTIIQ0fSOL5EtIIMzxZkSp_VDYnADhyIoMPxgaloK/pub?output=csv&sheet=Data';
 const TM={ANA:'#F47A38',BOS:'#FFB81C',BUF:'#003087',CGY:'#D2001C',CAR:'#CC0000',CHI:'#CF0A2C',COL:'#6F263D',CBJ:'#002654',DAL:'#006847',DET:'#CE1126',EDM:'#FF4C00',FLA:'#C8102E',LAK:'#A2AAAD',MIN:'#154734',MTL:'#AF1E2D',NSH:'#FFB81C',NJD:'#CE1126',NYI:'#00539B',NYR:'#0038A8',OTT:'#C52032',PHI:'#F74902',PIT:'#FCB514',SJS:'#006D75',SEA:'#001628',STL:'#002F87',TBL:'#002868',TOR:'#00205B',UTA:'#71AFE5',VAN:'#00205B',VGK:'#B4975A',WSH:'#041E42',WPG:'#041E42'};
 const AM={VEG:'VGK',WAS:'WSH',TB:'TBL',NJ:'NJD',SJ:'SJS',LA:'LAK',CLB:'CBJ'};
 
@@ -289,6 +1077,67 @@ function saveStats(){
   }catch(e){
     console.error('Error saving stats:',e);
   }
+}
+
+
+function cloneEntries(entries){
+  return (entries||[]).map(e=>({
+    teamName:e.teamName,
+    owner:e.owner,
+    total:e.total||0,
+    rank:e.rank||0,
+    players:(e.players||[]).map(p=>({
+      name:p.name,
+      team:p.team,
+      position:p.position,
+      pucks:Number(p.pucks)||1
+    }))
+  }));
+}
+
+async function fetchManualBackupStats(){
+  const url = MANUAL_DATA_URL || sn().manualDataUrl;
+  if(!url) throw new Error('No manual backup URL configured');
+  const r = await fetch(url);
+  if(!r.ok) throw new Error(`Manual backup fetch failed (${r.status})`);
+  const csv = await r.text();
+  const lines = csv.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length < 2) return [];
+  let headerIdx = lines.findIndex(l=>{
+    const cols = csvL(l).map(c=>c.trim().toLowerCase());
+    return cols.includes('player') && (cols.includes('tm') || cols.includes('team')) && cols.includes('pts');
+  });
+  if(headerIdx < 0) headerIdx = 0;
+  const headers = csvL(lines[headerIdx]).map(h=>h.trim().toLowerCase());
+  const idx = {};
+  headers.forEach((h,i)=>idx[h]=i);
+  const getIdx = (...names)=> names.find(n=>idx[n]!==undefined) !== undefined ? idx[names.find(n=>idx[n]!==undefined)] : -1;
+  const iPlayer = getIdx('player');
+  const iTeam = getIdx('tm','team');
+  const iPos = getIdx('pos','position');
+  const iGp = getIdx('gp','gp ');
+  const iG = getIdx('g');
+  const iA = getIdx('a');
+  const iPts = getIdx('pts','points');
+  const out = [];
+  for(let i=headerIdx+1;i<lines.length;i++){
+    const cols = csvL(lines[i]);
+    if(!cols.length) continue;
+    const name = (cols[iPlayer]||'').trim();
+    const teamRaw = (cols[iTeam]||'').trim();
+    if(!name || !teamRaw || name==='Player' || teamRaw==='Tm' || /^\d+TM$/i.test(teamRaw) || teamRaw==='Team') continue;
+    out.push({
+      name,
+      team:nm(teamRaw),
+      pos:((cols[iPos]||'F').trim()||'F')[0],
+      gp:parseInt((cols[iGp]||'0').replace(/[^\d-]/g,''))||0,
+      g:parseInt((cols[iG]||'0').replace(/[^\d-]/g,''))||0,
+      a:parseInt((cols[iA]||'0').replace(/[^\d-]/g,''))||0,
+      pts:parseInt((cols[iPts]||'0').replace(/[^\d-]/g,''))||0,
+      _s:'Manual Backup'
+    });
+  }
+  return out;
 }
 
 function parseRosterCSV(csv){
@@ -570,15 +1419,25 @@ function mergeRosterWithStats(){
 }
 
 async function fetchStats(sid){
+  // If manual backup mode is enabled, use the Google Sheet Data tab.
+  if(USE_MANUAL_DATA_BACKUP && sid==='20252026'){
+    try{
+      const manualStats = await fetchManualBackupStats();
+      if(manualStats && manualStats.length) return manualStats;
+    }catch(e){
+      console.warn('Manual backup fetch failed:', e);
+    }
+  }
+
   // If custom CSV was imported, use it for 2026
   if(rostersData&&sid==='20252026')return rostersData;
-  
+
   const gameType = sid === '20252026' ? 2 : 3; // 2 = regular season, 3 = playoffs
-  
+
   // Fallback to NHL APIs
   try{const r=await fetch(`https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&sort=[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"}]&start=0&limit=500&cayenneExp=gameTypeId=${gameType} and seasonId<=${sid} and seasonId>=${sid}`);if(r.ok){const d=await r.json();if(d.data?.length>0)return d.data.map(p=>({id:p.playerId,name:p.skaterFullName,team:nm(p.teamAbbrevs),pos:p.positionCode,gp:p.gamesPlayed||0,g:p.goals||0,a:p.assists||0,pts:p.points||0,_s:'NHL API'}));}}catch(e){console.warn('API1:',e);}
   try{const r=await fetch(`https://api-web.nhle.com/v1/skater-stats-leaders/${sid}/${gameType}?categories=points,goals,assists&limit=-1`);if(r.ok){const d=await r.json();const m=new Map();const pr=(l,c)=>{if(!l)return;for(const p of l){const id=p.id;if(!m.has(id))m.set(id,{id,name:`${p.firstName?.default||''} ${p.lastName?.default||''}`.trim(),team:nm(p.teamAbbrev?.default||''),pos:p.positionCode||'',gp:0,g:0,a:0,pts:0,_s:'NHL API'});const o=m.get(id);if(c==='points')o.pts=p.value||0;if(c==='goals')o.g=p.value||0;if(c==='assists')o.a=p.value||0;}};pr(d.points,'points');pr(d.goals,'goals');pr(d.assists,'assists');const res=[...m.values()];if(res.length>0)return res;}}catch(e){console.warn('API2:',e);}
-  
+
   // Final fallback
   if(sid==='20242025')return fallback2025();if(sid==='20252026')return fallback2026();return [];
 }
@@ -1005,11 +1864,10 @@ async function loadData(){if(_ld)return;_ld=true;
     S.config=await fetchConfigFromSheet();
     let en=[];
     if(S.yr===2026){
-      // For 2026, check if entries already exist (persisted or from Sheet)
-      if(S.entries&&S.entries.length>0){
-        en=S.entries;
-      }
-    }else{
+      en=cloneEntries(EMBEDDED_ENTRIES_2026);
+      S.entries=en;
+    }
+    else{
       en=await fetchEntries().catch(()=>sample());
     }
     _src=st.length>0?(st[0]._s||'API'):'none';
